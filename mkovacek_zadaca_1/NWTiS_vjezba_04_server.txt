@@ -1,0 +1,8 @@
+#NWTIS konfiguracija
+#Thu Mar 01 12:18:30 CET 2012
+port=8000
+evidDatoteka=NWTiS_evidencija.bin
+brojZahtjeva=100
+intervalSerijalizacije=3000
+adminDatoteka=administratori.txt
+brojDretvi=5
