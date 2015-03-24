@@ -26,21 +26,24 @@ public class ServerSustavaTest {
     @Test
     public void testProvjeraParametara() {
         System.out.println("provjeraParametara");
-        String p = "-server";
+        String p = "-server -konf NWTIS_mkovacek_1.txt";
         ServerSustava instance;
         try {
             instance = new ServerSustava(p);
-            Matcher expResult = null;
             Matcher result = instance.provjeraParametara(p);
-            assertNull(result);
-            p="-server -konf NWTIS_mkovacek_1.txt";
+            assertNotNull(result);
+            p = "-server -konf NWTIS_mkovacek_1.txt -load";
             result = instance.provjeraParametara(p);
             assertNotNull(result);
-            
-            p="-server -konf NWTIS_mkovacek_1.txt -load";
+
+            p = "-server -konf   NWTIS_mkovacek_1.txt    -load";
             result = instance.provjeraParametara(p);
             assertNotNull(result);
-            
+
+            p = "-server   -konf  NWTIS_mkovacek_1.txt -load";
+            result = instance.provjeraParametara(p);
+            assertNotNull(result); 
+
         } catch (Exception ex) {
             Logger.getLogger(ServerSustavaTest.class.getName()).log(Level.SEVERE, null, ex);
         }

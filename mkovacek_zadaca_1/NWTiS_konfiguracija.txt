@@ -3,7 +3,7 @@
 port=8000
 evidDatoteka=NWTiS_evidencija.bin
 intervalSerijalizacije=3
-adminDatoteka=admin.txt
+adminDatoteka=admini.txt
 brojDretvi=5
 brojZahtjeva=100
 razmakDretvi=10

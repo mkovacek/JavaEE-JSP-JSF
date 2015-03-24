@@ -22,20 +22,20 @@ import org.foi.nwtis.matnovak.konfiguracije.NemaKonfiguracije; //mkovacek
  * @author NWTiS_4
  */
 public class ServerSustava {
-
+    
     protected String parametri;
     protected Matcher mParametri;
-
+    
     public ServerSustava(String parametri) throws Exception {
         this.parametri = parametri;
         this.mParametri = provjeraParametara(parametri);
         if (this.mParametri == null) {
-            throw new Exception("Parametri servera ne odgovaraju!");
+            throw new Exception("ERROR 90 : Parametri servera ne odgovaraju!");
         }
     }
-
+    
     public Matcher provjeraParametara(String p) {
-        String sintaksa = "^-server -konf +([^\\s]+(.xml|.txt))( +-load)?$";
+        String sintaksa = "^-server\\s+-konf +([^\\s]+\\.(?i)(xml|txt))+(\\s+(-load))?$";
         Pattern pattern = Pattern.compile(sintaksa);
         Matcher m = pattern.matcher(p);
         boolean status = m.matches();
@@ -46,48 +46,48 @@ public class ServerSustava {
             return null;
         }
     }
-
+    
     public void pokreniServer() {
-        String datoteka=mParametri.group(1);
-        File dat=new File(datoteka);
-        if(!dat.exists()){
+        String datoteka = mParametri.group(1);
+        File dat = new File(datoteka);
+        if (!dat.exists()) {
             System.out.println("Datoteka konfiguracije ne postoji!");
             return;
         }
-        Konfiguracija konfig=null;
+        Konfiguracija konfig = null;
         try {
-            konfig=KonfiguracijaApstraktna.preuzmiKonfiguraciju(datoteka);
-            if(this.mParametri.group(2)!=null){
-                String datEvid=konfig.dajPostavku("evidDatoteka");
+            konfig = KonfiguracijaApstraktna.preuzmiKonfiguraciju(datoteka);
+            if (this.mParametri.group(3) != null) {
+                String datEvid = konfig.dajPostavku("evidDatoteka");
                 ucitajSerijaliziranuEvidenciju(datEvid);
             }
         } catch (NemaKonfiguracije ex) {
             Logger.getLogger(ServerSustava.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        SerijalizatorEvidencije se=new SerijalizatorEvidencije(konfig);
+        SerijalizatorEvidencije se = new SerijalizatorEvidencije(konfig);
         se.start();
-        
+
         //popravi
-        int brojDretvi=Integer.parseInt(konfig.dajPostavku("brojDretvi"));
+        int brojDretvi = Integer.parseInt(konfig.dajPostavku("brojDretvi"));
         //int brojDretvi=5;
-        ThreadGroup tg=new ThreadGroup("mkovacek");
-        ObradaZahtjeva[] dretve=new ObradaZahtjeva[brojDretvi];
+        ThreadGroup tg = new ThreadGroup("mkovacek");
+        ObradaZahtjeva[] dretve = new ObradaZahtjeva[brojDretvi];
         
         for (int i = 0; i < brojDretvi; i++) {
-            dretve[i]=new ObradaZahtjeva(tg, "mkovacek_"+i);
+            dretve[i] = new ObradaZahtjeva(tg, "mkovacek_" + i);
             dretve[i].setKonfig(konfig);
         }
         //popravi
-        int port=Integer.parseInt(konfig.dajPostavku("port"));
+        int port = Integer.parseInt(konfig.dajPostavku("port"));
         //int port=8000;
         
         try {
-            ServerSocket ss =new ServerSocket(port);
-            while(true){
-                Socket socket=ss.accept();//server čeka ulaz(zahtjev), kad dobi input šalje ga 
-                ObradaZahtjeva oz=dajSlobodnuDretvu(dretve);
-                if(oz==null){
+            ServerSocket ss = new ServerSocket(port);
+            while (true) {
+                Socket socket = ss.accept();//server čeka ulaz(zahtjev), kad dobi input šalje ga 
+                ObradaZahtjeva oz = dajSlobodnuDretvu(dretve);
+                if (oz == null) {
                     //TODO dovrsi sam jer nema slobodne dretve
                     System.out.println("ERROR 80; Nema slobodne dretve!");
                 } //else stavi
@@ -99,32 +99,32 @@ public class ServerSustava {
             Logger.getLogger(ServerSustava.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     private void ucitajSerijaliziranuEvidenciju(String datEvid) {
         //TODO:napravi sam!
-        File dat=new File(datEvid);
-        if(!dat.exists()){
+        File dat = new File(datEvid);
+        if (!dat.exists()) {
             System.out.println("Datoteka serijalizirane evidencije ne postoji!");
             return;
         }
+        //ucitavanje serijaliziranih podataka u List<Evidencija>da dalje trpam podatke...
         SerijalizatorEvidencije.deserijalizator(datEvid);
-        System.out.println("Evidencija: "+SerijalizatorEvidencije.evidencija);
-        //inace ucitaj serijaliziranu evidenciju iz datoteke...
+        SerijalizatorEvidencije.citanjeEvidencije(datEvid); //samo za prikaz podatka na početku
     }
-
+    
     private ObradaZahtjeva dajSlobodnuDretvu(ObradaZahtjeva[] dretve) {
         //TODO dovrsiti: odabire slobodnu dretvu
         //prvojeri kak ide to kružno dodjeljivanje!
         for (int i = 0; i < dretve.length; i++) {
-            if(dretve[i].getStanje().equals(ObradaZahtjeva.StanjeDretve.Slobodna)){
-                System.out.println("Izabrana slobodna dretva: "+dretve[i].getName());
+            if (dretve[i].getStanje().equals(ObradaZahtjeva.StanjeDretve.Slobodna)) {
+                System.out.println("Izabrana slobodna dretva: " + dretve[i].getName());
                 return dretve[i];
+            } else {
+                System.out.println("Zauzeta dretva: " + dretve[i].getName());
             }
-            else
-                System.out.println("Zauzeta dretva: "+dretve[i].getName());
         }
         return null;
         //return dretve[0]; //samo za sad dok ne implementiram
     }
-
+    
 }

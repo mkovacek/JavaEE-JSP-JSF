@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.foi.nwtis.matnovak.konfiguracije.Konfiguracija; //mkovacek
@@ -27,10 +29,12 @@ public class ObradaZahtjeva extends Thread {
     private Konfiguracija konfig;
     private Socket socket;
     private StanjeDretve stanje;
+    SimpleDateFormat date;
 
     public ObradaZahtjeva(ThreadGroup group, String name) {
         super(group, name);
         this.stanje = StanjeDretve.Slobodna;
+        date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     }
 
     @Override
@@ -42,10 +46,13 @@ public class ObradaZahtjeva extends Thread {
     public void run() {
         InputStream is = null;
         OutputStream os = null;
-        Evidencija evidencija;
+        Evidencija evidencija = null;
+        Date pocetak = null;
+        Date kraj = null;
         String zahtjev = null;
         String odgovor = null;
         try {
+            pocetak=new Date(new Date().getTime());
             is = socket.getInputStream();
             os = socket.getOutputStream();
 
@@ -56,12 +63,22 @@ public class ObradaZahtjeva extends Thread {
                     break;
                 }
                 sb.append((char) znak);
-                zahtjev=sb.toString();
+                zahtjev = sb.toString();
             }
+            kraj=new Date(new Date().getTime());
             System.out.println("Obrada zahtjeva: " + sb.toString()); //makni obrada zahtjeva
+            odgovor ="OK";
             os.write("OK".getBytes());
             os.flush();
-            odgovor="OK";
+            
+
+            /*if (evidencija.getPrviZahtjev() == null) {
+                prviZahtjev =
+            }*/
+
+            evidencija = new Evidencija(currentThread().getName(),zahtjev, odgovor);
+            SerijalizatorEvidencije.evidencija.add(evidencija);
+
         } catch (IOException ex) {
             Logger.getLogger(ObradaZahtjeva.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -87,8 +104,7 @@ public class ObradaZahtjeva extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(ObradaZahtjeva.class.getName()).log(Level.SEVERE, null, ex);
         }
-        evidencija=new Evidencija(currentThread().getName(), zahtjev, odgovor);
-        SerijalizatorEvidencije.evidencija.add(evidencija);
+
     }
 
     @Override

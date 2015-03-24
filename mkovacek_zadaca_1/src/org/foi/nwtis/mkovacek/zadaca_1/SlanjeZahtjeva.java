@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import org.foi.nwtis.matnovak.konfiguracije.Konfiguracija; //mkovacek
 
 /**
@@ -22,6 +23,9 @@ public class SlanjeZahtjeva extends Thread {
     private Konfiguracija konfig;
     private String server;
     private int port;
+    private String korisnik;
+    private int brojCiklusa;
+    private int pauza;
 
     @Override
     public void interrupt() {
@@ -37,6 +41,28 @@ public class SlanjeZahtjeva extends Thread {
         String korisnik = "mkovacek";
 
         while (true) {
+            /*if(brojac!=brojCiklusa){
+            sve! try{
+                    if(čekaj!=null){
+                        sleep(čekaj);
+                    }
+                     socket = new Socket(server, port);
+                     os = socket.getOutputStream();
+                     is = socket.getInputStream();
+
+                     String komanda = "USER " + korisnik + "; TIME;";
+                     os.write(komanda.getBytes());
+                     os.flush();
+                     socket.shutdownOutput(); ....
+                 }catch{
+                 }
+            
+                 sleep(intervalDretve);
+            }else
+                break;
+            
+            */
+            
             try {
                 //TODO:ako nije s ponavljanjem onda prekid rada nakon 1.ciklusa
                 socket = new Socket(server, port);
@@ -49,11 +75,6 @@ public class SlanjeZahtjeva extends Thread {
                 socket.shutdownOutput();
                 
                 StringBuilder sb = new StringBuilder();
-                int j = 100;
-                
-                /*while((int znak=is.read())!=1){
-                    sb.append((char) znak);
-                }*/
                 
                 while (true) {
                     int znak = is.read();
@@ -61,11 +82,6 @@ public class SlanjeZahtjeva extends Thread {
                         break;
                     }
                     sb.append((char) znak);
-
-                    //TODO ovo je privremeno
-                    if (sb.length() == j) {
-                        break;
-                    }
                 }
                 System.out.println("Slanje zahtjeva: "+sb.toString()); //makni slanje zahtjeva
 
@@ -95,6 +111,8 @@ public class SlanjeZahtjeva extends Thread {
                 Logger.getLogger(ObradaZahtjeva.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            
+            
             //ovo je privremeno (break)
             break;
         }
@@ -116,5 +134,21 @@ public class SlanjeZahtjeva extends Thread {
     public void setPort(int port) {
         this.port = port;
     }
+
+    public SlanjeZahtjeva(Konfiguracija konfig, String server, String korisnik, int brojCiklusa, int pauza) {
+        this.konfig = konfig;
+        this.server = server;
+        this.korisnik = korisnik;
+        this.brojCiklusa = brojCiklusa;
+        this.pauza = pauza;
+    }
+
+    public SlanjeZahtjeva() {
+    }
+
+
+
+
+    
 
 }

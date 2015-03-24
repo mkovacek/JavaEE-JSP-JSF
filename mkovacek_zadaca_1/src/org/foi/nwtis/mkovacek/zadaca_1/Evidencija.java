@@ -22,6 +22,7 @@ public class Evidencija implements Serializable{
     private Date vrijemeRada;
     
     private Date vrijemeZahtjeva;
+    private Date vrijemeOdgovora;
     private String ip;
     private String zahtjev;
     private String odgovor;
@@ -43,9 +44,17 @@ public class Evidencija implements Serializable{
         this.zahtjev = zahtjev;
         this.odgovor = odgovor;
     }
-    
-    
 
+    public Evidencija(String oznakaDretve, Date vrijemeZahtjeva, Date vrijemeOdgovora, String zahtjev, String odgovor) {
+        this.oznakaDretve = oznakaDretve;
+        this.vrijemeZahtjeva = vrijemeZahtjeva;
+        this.vrijemeOdgovora = vrijemeOdgovora;
+        this.zahtjev = zahtjev;
+        this.odgovor = odgovor;
+    }
+    
+    
+    
     public String getOznakaDretve() {
         return oznakaDretve;
     }
@@ -84,6 +93,10 @@ public class Evidencija implements Serializable{
 
     public String getOdgovor() {
         return odgovor;
+    }
+
+    public Date getVrijemeOdgovora() {
+        return vrijemeOdgovora;
     }
           
 }

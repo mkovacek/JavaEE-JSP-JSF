@@ -5,6 +5,7 @@
  */
 package org.foi.nwtis.mkovacek.zadaca_1;
 
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,7 +25,7 @@ import org.foi.nwtis.matnovak.konfiguracije.Konfiguracija; //mkovacek
  *
  * @author NWTiS_4
  */
-public class SerijalizatorEvidencije extends Thread implements Serializable{
+public class SerijalizatorEvidencije extends Thread implements Serializable {
 
     Konfiguracija konfig;
     public static List<Evidencija> evidencija = new ArrayList<>();
@@ -46,18 +47,18 @@ public class SerijalizatorEvidencije extends Thread implements Serializable{
         //TODO zavrsiti za serijalizaciju evidendije, tu sva logika kod pokretanja ide
         //pokreći serijalizaciju u određenim intervalima vidi 
         // this.konfig.dajPostavku("intervalSerijlaizacije");
-        
-        long sleepInterval= Long.parseLong(this.konfig.dajPostavku("intervalSerijalizacije"));
-        while(true){
+
+        long sleepInterval = Long.parseLong(this.konfig.dajPostavku("intervalSerijalizacije"));
+        while (true) {
             try {
-                sleep(sleepInterval);
-               // serijalizator("evidencijaDat_"+date.format(new Date()).toString()+".bin");
+                sleep(sleepInterval*1000);
+                // serijalizator("evidencijaDat_"+date.format(new Date()).toString()+".bin");
                 serijalizator(konfig.dajPostavku("evidDatoteka"));
             } catch (InterruptedException ex) {
                 Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
     }
 
     @Override
@@ -93,26 +94,22 @@ public class SerijalizatorEvidencije extends Thread implements Serializable{
                 Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        System.out.println("Serijalizirano");
+        System.out.println("Serijalizirano"); //
     }
 
     public static void deserijalizator(String datoteka) {
-        FileInputStream fis=null;
-        ObjectInputStream ois=null;
-        
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
+
         try {
-            fis=new FileInputStream(datoteka);
-            ois=new ObjectInputStream(fis);
-            evidencija=(List<Evidencija>)ois.readObject();
-        } catch (FileNotFoundException ex) {
+            fis = new FileInputStream(datoteka);
+            ois = new ObjectInputStream(fis);
+            evidencija = (List<Evidencija>) ois.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-         if (fis != null) {
+        } 
+
+        if (fis != null) {
             try {
                 fis.close();
             } catch (IOException ex) {
@@ -127,8 +124,17 @@ public class SerijalizatorEvidencije extends Thread implements Serializable{
                 Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        System.out.println("Deserijalizirano");
-        
+        System.out.println("Deserijalizirano"); //remove
+
+    }
+
+    public static void citanjeEvidencije(String datoteka) {
+        deserijalizator(datoteka);
+        for (Evidencija item : evidencija) {
+            String line = "Oznaka dretve: " + item.getOznakaDretve()+ "\nZahtjev: " + item.getZahtjev()
+                    + "\nOdgovor: " + item.getOdgovor()+ "\n---------------------\n";
+            System.out.println(line);
+        }
     }
 
 }
