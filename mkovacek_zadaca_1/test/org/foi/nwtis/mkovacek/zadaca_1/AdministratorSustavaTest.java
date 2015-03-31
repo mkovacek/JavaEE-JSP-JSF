@@ -35,14 +35,34 @@ public class AdministratorSustavaTest {
             Matcher result = instance.provjeraParametara(p);
             assertNotNull(result);
 
-            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -pause";
+            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -start";
             result = instance.provjeraParametara(p);
             assertNotNull(result);
 
-            p = "-admin -s localhost -port 8000 -u p_e-ro -p 6_5-4#3!21 -pause";
+            p = "-admin -s localhost -port 8000 -u pe_-ro -p 654321 -stop";
             result = instance.provjeraParametara(p);
             assertNotNull(result);
-            
+
+            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -clean";
+            result = instance.provjeraParametara(p);
+            assertNotNull(result);
+
+            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -stat";
+            result = instance.provjeraParametara(p);
+            assertNotNull(result);
+
+            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -upload";
+            result = instance.provjeraParametara(p);
+            assertNotNull(result);
+
+            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -download";
+            result = instance.provjeraParametara(p);
+            assertNotNull(result);
+
+            p = "-admin -s localhost -port 8000 -u p_e-ro -p 6_5-4#3!21";
+            result = instance.provjeraParametara(p);
+            assertNotNull(result);
+
         } catch (Exception e) {
         }
     }

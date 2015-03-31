@@ -5,6 +5,7 @@
  */
 package org.foi.nwtis.mkovacek.zadaca_1;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,11 +13,14 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.foi.nwtis.mkovacek.konfiguracije.Konfiguracija;
+import org.foi.nwtis.mkovacek.konfiguracije.KonfiguracijaApstraktna;
+import org.foi.nwtis.mkovacek.konfiguracije.NemaKonfiguracije;
 
 /**
  *
@@ -33,9 +37,10 @@ public class ObradaZahtjeva extends Thread {
     private Konfiguracija konfig;
     private Socket socket;
     private StanjeDretve stanje;
+    private Matcher mParametri;
 
     private String userSintaksa = "^USER +([a-zA-Z0-9_-]+); TIME; $";      //admin promijeni UPLOAD i DOWNLOAD
-    private String adminSintaksa = "^USER +([a-zA-Z0-9_-]+); PASSWD +([a-zA-Z0-9-_#!]+); (PAUSE|START|STOP|CLEAN|UPLOAD|DOWNLOAD); $";
+    private String adminSintaksa = "^USER +([a-zA-Z0-9_-]+); PASSWD +([a-zA-Z0-9-_#!]+); (PAUSE|START|STOP|CLEAN|STAT|UPLOAD|DOWNLOAD);$";
 
     public static HashMap<String, EvidencijaModel> evidencijaRada = new HashMap<>();
 
@@ -67,15 +72,18 @@ public class ObradaZahtjeva extends Thread {
 
         while (true) {
             synchronized (this) {
+                // while (this.isCekaj() && !ServerSustava.isStop()) {
                 while (this.isCekaj()) {
                     try {
+                        //System.out.println("wait");
                         wait();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(ObradaZahtjeva.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                //if (!ServerSustava.isStop()) {
+                // System.out.println("nije stopiran");
                 try {
-                    System.out.println("Try obrada zahtjeva");
                     pocetak = System.currentTimeMillis();
                     zahtjevi = new Date();
                     vrijeme = date.format(zahtjevi);
@@ -96,23 +104,108 @@ public class ObradaZahtjeva extends Thread {
                         zahtjev = sb.toString();
                     }
                     System.out.println("Obrada zahtjeva: " + sb.toString() + date.format(new Date())); //makni obrada zahtjeva
-                    
+
                     if (provjeraZahtjeva(zahtjev).equals("true;user")) {
-                        odgovor = "OK " + date.format(new Date());
+                        //ako nije pauziran i stopiran server...
+                        if (ServerSustava.isPauza()) {
+                            odgovor = "Server: pauza/stop!";
+                        } else {
+                            odgovor = "OK " + date.format(new Date());
+                        }
                     } else if (provjeraZahtjeva(zahtjev).equals("true;admin")) {
-                        //nova provjera gdje tražim da li je upload, start....
-                        //Matcher m=adminKomanda(zahtjev);
-                        //if(m!=null){m.group() bla bla}
-                        odgovor = "OK " + date.format(new Date());
+                        this.mParametri = adminZahtjev(zahtjev);
+                        String korisnik = this.mParametri.group(1);
+                        String lozinka = this.mParametri.group(2);
+                        String komanda = this.mParametri.group(3);
+                        if (komanda.equals("PAUSE")) {
+                            if (postojiKorisnikLozinka(korisnik, lozinka)) {
+                                if (!ServerSustava.isPauza()) {
+                                    ServerSustava.setPauza(true);
+                                    odgovor = "OK";
+                                } else {
+                                    odgovor = "ERROR 01: Server je u stanju pauze!";
+                                }
+                            } else {
+                                odgovor = "ERROR 00; Korisnik nije admin ili lozinka ne odgovara!";
+                            }
+                        } else if (komanda.equals("START")) {
+                            if (postojiKorisnikLozinka(korisnik, lozinka)) {
+                                if (ServerSustava.isPauza()) {
+                                    ServerSustava.setPauza(false);
+                                    odgovor = "OK";
+                                } else {
+                                    odgovor = "ERROR 02: Server nije u stanju pauze!";
+                                }
+                            } else {
+                                odgovor = "ERROR 00; Korisnik nije admin ili lozinka ne odgovara!";
+                            }
+                        } else if (komanda.equals("STOP")) {
+                            if (postojiKorisnikLozinka(korisnik, lozinka)) {
+                                if (!ServerSustava.isStop()) {
+                                    ServerSustava.setStop(true);
+                                    odgovor = "OK";
+                                    //System.out.println("interrupt obrada");
+                                    this.interrupt();
+                                    //System.out.println("poslije");
+                                } else {
+                                    odgovor = "ERROR 03: Server stopiran!";
+                                }
+                            } else {
+                                odgovor = "ERROR 00; Korisnik nije admin ili lozinka ne odgovara!";
+                            }
+                        } else if (komanda.equals("CLEAN")) {
+                            if (postojiKorisnikLozinka(korisnik, lozinka)) {
+                                try {
+                                    HashMap<String, EvidencijaModel> evidencija = new HashMap<>();
+                                    Evidencija.setEvidencijaRada(evidencija);
+                                    odgovor = "OK";
+                                } catch (Exception e) {
+                                    odgovor = "ERROR 04; Greška kod brisanja evidencije iz memorije!";
+                                }
+                            } else {
+                                odgovor = "ERROR 00; Korisnik nije admin ili lozinka ne odgovara!";
+                            }
+                        } else if (komanda.equals("STAT")) {
+                            if (postojiKorisnikLozinka(korisnik, lozinka)) {
+                                    odgovor = "OK";
+                                    if (!Evidencija.getEvidencijaRada().isEmpty()) {
+                                        for (Map.Entry<String, EvidencijaModel> entrySet : Evidencija.getEvidencijaRada().entrySet()) {
+                                            System.out.println("Oznaka dretve: " + entrySet.getValue().getOznaka() + "\nPrviZahtjev: " + entrySet.getValue().getPrvizahtjev()
+                                                    + "\nZadnji zahtjev: " + entrySet.getValue().getZadnjiZahtjev() + "\nUkupan broj zahtjeva: " + entrySet.getValue().getUkupanBrojZahtjeva()
+                                                    + "\nNeuspjesan br. zahtjeva: " + entrySet.getValue().getNeuspjesanBrojZahtjeva() + "\nUkupno vrijeme rada: " + entrySet.getValue().getUkupnoVrijemeRada()
+                                                    + "\nKorisnikovi zahtjevi: ");
+                                            if (!entrySet.getValue().getZahtjevi().isEmpty()) {
+                                                for (EvidencijaModel.ZahtjevKorisnika item : entrySet.getValue().getZahtjevi()) {
+                                                    System.out.println("\tIP adresa: " + item.getIpAdresa()
+                                                            + "\n\tVrijeme: " + item.getVrijeme()
+                                                            + "\n\tZahtjev: " + item.getZahtjev()
+                                                            + "\n\tOdgovor: " + item.getOdgovor() + "\n");
+                                                }
+                                            }
+                                            System.out.println("°°°°°°°°°°°°°°°°°°°°°°°°°\n");
+                                        }
+                                    } else {
+                                        System.out.println("ERROR 05; Evidencija rad je prazna!");
+                                    }
+                            } else {
+                                odgovor = "ERROR 00; Korisnik nije admin ili lozinka ne odgovara!";
+                            }
+                        } else if (komanda.equals("UPLOAD")) {
+
+                        } else if (komanda.equals("DOWNLOAD")) {
+
+                        } else {
+                            odgovor = "ERROR 90; Pogresna sintaksa komande!";
+                        }
                     } else {
                         odgovor = "ERROR 90; Pogresna sintaksa komande!";
                     }
                     os.write(odgovor.getBytes());
                     os.flush();
                     socket.shutdownOutput();
-                    
+
                     kraj = System.currentTimeMillis();
-                    ukupnoVrijeme=kraj-pocetak;
+                    ukupnoVrijeme = kraj - pocetak;
                 } catch (IOException ex) {
                     Logger.getLogger(ObradaZahtjeva.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -141,12 +234,11 @@ public class ObradaZahtjeva extends Thread {
                     }
                 }
 
-                
                 ipAdresa = socket.getRemoteSocketAddress().toString();
 
                 EvidencijaModel.ZahtjevKorisnika zahtjevKorisnika = evidencijaModel.new ZahtjevKorisnika(vrijeme, ipAdresa, zahtjev, odgovor);
                 evidencijaModel.dodajZahtjev(zahtjevKorisnika);
-                evidencijaModel.setUkupnoVrijemeRada(evidencijaModel.getUkupnoVrijemeRada()+ukupnoVrijeme);
+                evidencijaModel.setUkupnoVrijemeRada(evidencijaModel.getUkupnoVrijemeRada() + ukupnoVrijeme);
 
                 evidencijaRada = Evidencija.getEvidencijaRada();
                 evidencijaRada.put(this.getName(), evidencijaModel);
@@ -155,9 +247,11 @@ public class ObradaZahtjeva extends Thread {
                 this.setStanje(StanjeDretve.Slobodna);
                 this.setCekaj(true);
             }
-
+            // }
+            /*System.out.println("prije break;");
+             break;*/
         }
-
+        //System.out.println("kraj run metode");
     }
 
     @Override
@@ -169,8 +263,10 @@ public class ObradaZahtjeva extends Thread {
         this.konfig = konfig;
     }
 
-    
-    
+    public Konfiguracija getKonfig() {
+        return konfig;
+    }
+
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
@@ -228,4 +324,26 @@ public class ObradaZahtjeva extends Thread {
         }
     }
 
+    public boolean postojiKorisnikLozinka(String korisnik, String lozinka) {
+        String datoteka = getKonfig().dajPostavku("adminDatoteka");
+        File dat = new File(datoteka);
+        if (!dat.exists()) {
+            System.out.println("Admin datoteka ne postoji!");
+            return false;
+        }
+
+        Konfiguracija konfiguracija = null;
+        String password = "";
+        try {
+            konfiguracija = KonfiguracijaApstraktna.preuzmiKonfiguraciju(datoteka);
+            password = konfiguracija.dajPostavku(korisnik);
+            if (password.equals(lozinka)) {
+                return true;
+            }
+            return false;
+        } catch (NemaKonfiguracije ex) {
+            Logger.getLogger(ServerSustava.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }

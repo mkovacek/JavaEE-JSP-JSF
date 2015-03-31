@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +31,10 @@ public class ServerSustava {
     private List<ObradaZahtjeva> redDretvi;
     protected String parametri;
     protected Matcher mParametri;
+
+    private static boolean pauza = false;
+    private static boolean stop = false;
+    SimpleDateFormat date = new SimpleDateFormat("ddMMyyyy_HHmmss");
 
     public ServerSustava(String parametri) throws Exception {
         this.parametri = parametri;
@@ -87,6 +93,10 @@ public class ServerSustava {
         try {
             ServerSocket ss = new ServerSocket(port);
             while (true) {
+               /* if (isStop()) {
+                    break;
+                }
+                System.out.println("while server: " + isStop());*/
                 Socket socket = ss.accept();
                 ObradaZahtjeva oz = dajSlobodnuDretvu(redDretvi);
                 if (oz == null) {
@@ -112,10 +122,21 @@ public class ServerSustava {
                         }
                     }
                 }
+                if (isStop()) {
+                    break;
+                }
             }
+            /*for (int i = 0; i < brojDretvi; i++) {
+             System.out.println("interrup dretvi");
+             dretve[i].interrupt();
+             }*/
+            System.out.println("Zadnja serijalizacija!");
+            SerijalizatorEvidencije.serijalizator(konfig.dajPostavku("evidDatoteka") + date.format(new Date()) + ".bin");
+           // se.interrupt();
         } catch (IOException ex) {
             Logger.getLogger(ServerSustava.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     private void ucitajSerijaliziranuEvidenciju(String datEvid) {
@@ -144,4 +165,21 @@ public class ServerSustava {
         }
         return null;
     }
+
+    public static boolean isPauza() {
+        return pauza;
+    }
+
+    public static void setPauza(boolean pauza) {
+        ServerSustava.pauza = pauza;
+    }
+
+    public static boolean isStop() {
+        return stop;
+    }
+
+    public static void setStop(boolean stop) {
+        ServerSustava.stop = stop;
+    }
+
 }

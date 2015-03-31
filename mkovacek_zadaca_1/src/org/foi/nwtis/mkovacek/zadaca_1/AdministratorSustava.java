@@ -5,20 +5,15 @@
  */
 package org.foi.nwtis.mkovacek.zadaca_1;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import static java.lang.Thread.sleep;
 import java.net.Socket;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.foi.nwtis.mkovacek.konfiguracije.Konfiguracija;
-import org.foi.nwtis.mkovacek.konfiguracije.KonfiguracijaApstraktna;
-import org.foi.nwtis.mkovacek.konfiguracije.NemaKonfiguracije;
 
 /**
  *
@@ -46,10 +41,10 @@ public class AdministratorSustava {
         int port=Integer.parseInt(this.mParametri.group(2));
         String user=this.mParametri.group(3);
         String password=this.mParametri.group(4);
-        
+                
         String komanda="";
-        if(this.mParametri.group(6)!=null){
-            komanda=this.mParametri.group(6);
+        if(this.mParametri.group(7)!=null){
+            komanda=this.mParametri.group(7);
             komanda=komanda.toUpperCase();
         }
 
@@ -58,7 +53,8 @@ public class AdministratorSustava {
             os = socket.getOutputStream();
             is = socket.getInputStream();
             
-            String zahtjev ="USER " + user + "; PASSWD "+password+"; "+komanda;
+            String zahtjev ="USER " + user + "; PASSWD "+password+"; "+komanda+";";
+            System.out.println(zahtjev);
             os.write(zahtjev.getBytes());
             os.flush();
             socket.shutdownOutput();
@@ -71,7 +67,7 @@ public class AdministratorSustava {
                 }
                 sb.append((char) znak);
             }
-            System.out.println(sb.toString()); //ili od obrade zahtjeva ime dretve
+            System.out.println(sb.toString()); 
         } catch (IOException ex) {
             Logger.getLogger(SlanjeZahtjeva.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -103,7 +99,7 @@ public class AdministratorSustava {
     }
 
     public Matcher provjeraParametara(String p) {
-        String sintaksa = "^-admin\\s+-s +([^\\s]+)\\s+-port +(\\d{4})\\s+-u +([a-zA-Z0-9_-]+)\\s+-p +([a-zA-Z0-9-_#!]+)\\s+(-(pause|start|stop|clean|stat|upload|download))?$";
+        String sintaksa = "^-admin\\s+-s +([^\\s]+)\\s+-port +(\\d{4})\\s+-u +([a-zA-Z0-9_-]+)\\s+-p +([a-zA-Z0-9-_#!]+)(\\s+(-(pause|start|stop|clean|stat|upload|download)))?$";
         Pattern pattern = Pattern.compile(sintaksa);
         Matcher m = pattern.matcher(p);
         boolean status = m.matches();
