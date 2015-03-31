@@ -5,7 +5,6 @@
  */
 package org.foi.nwtis.mkovacek.zadaca_1;
 
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,12 +13,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.foi.nwtis.matnovak.konfiguracije.Konfiguracija; //mkovacek
+import org.foi.nwtis.mkovacek.konfiguracije.Konfiguracija; //mkovacek
 
 /**
  *
@@ -28,13 +26,13 @@ import org.foi.nwtis.matnovak.konfiguracije.Konfiguracija; //mkovacek
 public class SerijalizatorEvidencije extends Thread implements Serializable {
 
     Konfiguracija konfig;
-    public static List<Evidencija> evidencija = new ArrayList<>();
     SimpleDateFormat date;
+   // public static Evidencija evidencijaRada = new Evidencija();
 
     public SerijalizatorEvidencije(Konfiguracija konfig) {
         super(); //za provjeru dal nadklasa radi nešto
         this.konfig = konfig;
-        date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        date = new SimpleDateFormat("ddMMyyyy_HHmmss");
     }
 
     @Override
@@ -50,10 +48,10 @@ public class SerijalizatorEvidencije extends Thread implements Serializable {
 
         long sleepInterval = Long.parseLong(this.konfig.dajPostavku("intervalSerijalizacije"));
         while (true) {
-            try {
-                sleep(sleepInterval*1000);
-                // serijalizator("evidencijaDat_"+date.format(new Date()).toString()+".bin");
-                serijalizator(konfig.dajPostavku("evidDatoteka"));
+            try {       
+                serijalizator(this.konfig.dajPostavku("evidDatoteka")+date.format(new Date())+".bin");
+                //serijalizator(naziv);
+                sleep(sleepInterval * 1000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -71,8 +69,10 @@ public class SerijalizatorEvidencije extends Thread implements Serializable {
         ObjectOutputStream oos = null;
         try {
             fos = new FileOutputStream(datoteka);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(evidencija);
+            oos = new ObjectOutputStream(fos);       
+            oos.writeObject(Evidencija.getEvidencijaRada());
+            System.out.println(Evidencija.getEvidencijaRada().entrySet());
+            System.out.println("Serijalizirano");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -94,20 +94,19 @@ public class SerijalizatorEvidencije extends Thread implements Serializable {
                 Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        System.out.println("Serijalizirano"); //
     }
 
     public static void deserijalizator(String datoteka) {
+        HashMap<String, EvidencijaModel> evidencija = new HashMap<>();
         FileInputStream fis = null;
         ObjectInputStream ois = null;
-
         try {
             fis = new FileInputStream(datoteka);
             ois = new ObjectInputStream(fis);
-            evidencija = (List<Evidencija>) ois.readObject();
+            evidencija = (HashMap<String, EvidencijaModel>) ois.readObject();            
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
 
         if (fis != null) {
             try {
@@ -124,17 +123,11 @@ public class SerijalizatorEvidencije extends Thread implements Serializable {
                 Logger.getLogger(SerijalizatorEvidencije.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        System.out.println("Deserijalizirano"); //remove
-
-    }
-
-    public static void citanjeEvidencije(String datoteka) {
-        deserijalizator(datoteka);
-        for (Evidencija item : evidencija) {
-            String line = "Oznaka dretve: " + item.getOznakaDretve()+ "\nZahtjev: " + item.getZahtjev()
-                    + "\nOdgovor: " + item.getOdgovor()+ "\n---------------------\n";
-            System.out.println(line);
+        if(!evidencija.isEmpty()){
+            Evidencija.setEvidencijaRada(evidencija);
+            System.out.println("Deserijalizirano");
+        }else{
+            System.out.println("Dohvaćena evidencija je prazna!");
         }
-    }
-
+    }    
 }
