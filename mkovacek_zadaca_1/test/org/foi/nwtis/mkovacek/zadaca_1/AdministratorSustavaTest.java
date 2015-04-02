@@ -51,17 +51,18 @@ public class AdministratorSustavaTest {
             result = instance.provjeraParametara(p);
             assertNotNull(result);
 
-            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -upload";
+            p = "-admin -s localhost -port 8000 -u pe_-ro -p 654321 -upload upload.txt";
             result = instance.provjeraParametara(p);
             assertNotNull(result);
 
-            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -download";
+            p = "-admin   -s   localhost   -port   8000   -u   pe_-ro   -p   654321 -download download.xml";
             result = instance.provjeraParametara(p);
             assertNotNull(result);
 
             p = "-admin -s localhost -port 8000 -u p_e-ro -p 6_5-4#3!21";
             result = instance.provjeraParametara(p);
             assertNotNull(result);
+            
 
         } catch (Exception e) {
         }

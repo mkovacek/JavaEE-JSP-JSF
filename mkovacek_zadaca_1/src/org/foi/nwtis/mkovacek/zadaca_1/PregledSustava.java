@@ -19,6 +19,11 @@ public class PregledSustava {
     protected String parametri;
     protected Matcher mParametri;
 
+    /**
+     * Konstruktor
+     *
+     * @param parametri - parametri show klijenta
+     */
     public PregledSustava(String parametri) throws Exception {
         this.parametri = parametri;
         this.mParametri = provjeraParametara(parametri);
@@ -27,6 +32,12 @@ public class PregledSustava {
         }
     }
 
+    /**
+     * Metoda provjerava ispravnost upisanog argumenta
+     *
+     * @param p - argument za provjeru
+     * @return matcher ili null
+     */
     public Matcher provjeraParametara(String p) {
         String sintaksa = "^-show\\s+-s +([^\\s]+)$";
         Pattern pattern = Pattern.compile(sintaksa);
@@ -40,17 +51,26 @@ public class PregledSustava {
         }
     }
 
+    /**
+     * Metoda za pokretanje preglednika.
+     *
+     */
     public void pokreniPreglednik() {
         String datoteka = mParametri.group(1);
         File dat = new File(datoteka);
         if (!dat.exists()) {
-            System.out.println("Datoteka konfiguracije ne postoji!");
+            System.out.println("Datoteka evidencije ne postoji!");
             return;
         }
-        citanjeEvidencije(datoteka);
+        this.citanjeEvidencije(datoteka);
         return;
     }
 
+    /**
+     * Metoda za prikazivanje evidencije rada dretvi iz datoteke.
+     *
+     * @param datoteka - naziv datoteke koja sadrzi evidenciju
+     */
     public void citanjeEvidencije(String datoteka) {
         SerijalizatorEvidencije.deserijalizator(datoteka);
         if (!Evidencija.getEvidencijaRada().isEmpty()) {

@@ -9,20 +9,31 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
+ * Klasa Evidencija implementira Serializable. Sluzi za postavljanje i
+ * dohvacanje evidencije rada dretvi.
  *
- * @author Matija
+ * @author Matija Kovacek
  */
-public class Evidencija implements Serializable{
-    
-    private static HashMap<String, EvidencijaModel> evidencijaRada=new HashMap<>();
+public class Evidencija implements Serializable {
 
+    private static HashMap<String, EvidencijaModel> evidencijaRada = new HashMap<>();
+
+    /**
+     * Metoda dohvaca evidencije rada dretvi.
+     *
+     * @return (HashMap<String, EvidencijaModel>) evidenciju rada dretvi
+     */
     public static HashMap<String, EvidencijaModel> getEvidencijaRada() {
         return evidencijaRada;
     }
 
+    /**
+     * Metoda postavlja evidenciju rada dretvi.
+     *
+     * @param evidencijaRada - evidencija rada dretvi.
+     */
     public static void setEvidencijaRada(HashMap<String, EvidencijaModel> evidencijaRada) {
-       // this.evidencijaRada = evidencijaRada;
         Evidencija.evidencijaRada = evidencijaRada;
     }
-          
+
 }

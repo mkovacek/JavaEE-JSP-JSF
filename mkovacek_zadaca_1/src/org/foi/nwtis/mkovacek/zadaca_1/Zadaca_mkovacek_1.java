@@ -11,12 +11,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Main klasa
  *
- * @author NWTiS_4
+ * @author Matija Kovacek
  */
 public class Zadaca_mkovacek_1 {
 
     /**
+     * Metoda pokrece jedan od cetiri nacina rada programa
+     *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -71,6 +74,12 @@ public class Zadaca_mkovacek_1 {
         }
     }
 
+    /**
+     * Metoda provjerava ispravnost upisanog argumenta
+     *
+     * @param p - argument za provjeru
+     * @return matcher ili null
+     */
     public Matcher provjeraParametara(String p) {
         String sintaksa = "(^-server.+)|(^-admin.+)|(^-user.+)|(^-show.+)";
         Pattern pattern = Pattern.compile(sintaksa);

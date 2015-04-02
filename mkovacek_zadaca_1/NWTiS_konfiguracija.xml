@@ -4,12 +4,12 @@
 <comment>NWTiS - konfig</comment>
 <entry key="port">8000</entry>
 <entry key="evidDatoteka">NWTiS_evidencija.bin</entry>
-<entry key="intervalSerijalizacije">300</entry>
-<entry key="adminDatoteka">admin.txt</entry>
+<entry key="intervalSerijalizacije">10</entry>
+<entry key="adminDatoteka">admini.txt</entry>
 <entry key="brojDretvi">5</entry>
 <entry key="brojZahtjeva">100</entry>
 <entry key="razmakDretvi">10</entry>
-<entry key="intervalDretve">30</entry>
-<entry key="pauzaProblema">3</entry>
+<entry key="intervalDretve">20</entry>
+<entry key="pauzaProblema">2</entry>
 <entry key="brojPokusajaProblema">7</entry>
 </properties>

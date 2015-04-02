@@ -1,12 +1,12 @@
 #NWTIS konfiguracija
 #Thu Mar 01 12:18:30 CET 2012
 port=8000
-evidDatoteka=NWTiS_evidencija
-intervalSerijalizacije=30
-adminDatoteka=admini.txt
+evidDatoteka=NWTiS_evidencija.bin
+intervalSerijalizacije=10
+adminDatoteka=admini.xml
 brojDretvi=5
 brojZahtjeva=100
-razmakDretvi=3
-intervalDretve=2
-pauzaProblema=3
-brojPokusajaProblema=7
+razmakDretvi=5
+intervalDretve=15
+pauzaProblema=2
+brojPokusajaProblema=5

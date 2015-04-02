@@ -12,7 +12,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,19 +22,25 @@ import org.foi.nwtis.mkovacek.konfiguracije.KonfiguracijaApstraktna;
 import org.foi.nwtis.mkovacek.konfiguracije.NemaKonfiguracije;
 
 /**
+ * Klasa ServerSustava ceka zahtjeve korisnika te ih predaje objektu dretve za
+ * izvrsavanje.
  *
- * @author NWTiS_4
+ * @author Matija Kovacek
  */
 public class ServerSustava {
 
     private List<ObradaZahtjeva> redDretvi;
     protected String parametri;
     protected Matcher mParametri;
+    private static boolean pauza;
+    private static boolean stop;
+    private SimpleDateFormat date = new SimpleDateFormat("ddMMyyyy_HHmmss");
 
-    private static boolean pauza = false;
-    private static boolean stop = false;
-    SimpleDateFormat date = new SimpleDateFormat("ddMMyyyy_HHmmss");
-
+    /**
+     * Konstruktor
+     *
+     * @param parametri - parametri servera
+     */
     public ServerSustava(String parametri) throws Exception {
         this.parametri = parametri;
         this.mParametri = provjeraParametara(parametri);
@@ -45,6 +50,12 @@ public class ServerSustava {
         redDretvi = new ArrayList<>();
     }
 
+    /**
+     * Metoda provjerava ispravnost upisanog argumenta
+     *
+     * @param p - argument za provjeru
+     * @return matcher ili null
+     */
     public Matcher provjeraParametara(String p) {
         String sintaksa = "^-server\\s+-konf +([^\\s]+\\.(?i)(xml|txt))+(\\s+(-load))?$";
         Pattern pattern = Pattern.compile(sintaksa);
@@ -58,6 +69,13 @@ public class ServerSustava {
         }
     }
 
+    /**
+     * Metoda za pokretanje servera. Ucitava se konfiguracija, po potrebi se
+     * ucitava serijalizirana evidencija, pokrece se dretva za serijalizaciju
+     * evidencije, kreira se grupa dretvi, otvara se socket i server ceka
+     * zahjeve korisnika.
+     *
+     */
     public void pokreniServer() {
         String datoteka = mParametri.group(1);
         File dat = new File(datoteka);
@@ -86,6 +104,7 @@ public class ServerSustava {
         for (int i = 0; i < brojDretvi; i++) {
             dretve[i] = new ObradaZahtjeva(tg, "mkovacek_" + i);
             dretve[i].setKonfig(konfig);
+            dretve[i].setNazivKonfiguracijskeDatoteke(datoteka);
             redDretvi.add(dretve[i]);
         }
 
@@ -93,11 +112,10 @@ public class ServerSustava {
         try {
             ServerSocket ss = new ServerSocket(port);
             while (true) {
-               /* if (isStop()) {
-                    break;
-                }
-                System.out.println("while server: " + isStop());*/
                 Socket socket = ss.accept();
+                if (ServerSustava.isStop()) {
+                    return;
+                }
                 ObradaZahtjeva oz = dajSlobodnuDretvu(redDretvi);
                 if (oz == null) {
                     String odgovor = "ERROR 80; Nema slobodne dretve!";
@@ -108,37 +126,27 @@ public class ServerSustava {
                 } else {
                     oz.setStanje(ObradaZahtjeva.StanjeDretve.Zauzeta);
                     oz.setSocket(socket);
-                    //boolean cekaj = false;
                     oz.setCekaj(false);
-                    //if (!oz.isPokrenuta()) {
                     if (!oz.isAlive()) {
-                        //oz.setPokrenuta(true);
-                        System.out.println("Start()");
                         oz.start();
                     } else {
-                        System.out.println("Notify()");
                         synchronized (oz) {
                             oz.notify();
                         }
                     }
                 }
-                if (isStop()) {
-                    break;
-                }
             }
-            /*for (int i = 0; i < brojDretvi; i++) {
-             System.out.println("interrup dretvi");
-             dretve[i].interrupt();
-             }*/
-            System.out.println("Zadnja serijalizacija!");
-            SerijalizatorEvidencije.serijalizator(konfig.dajPostavku("evidDatoteka") + date.format(new Date()) + ".bin");
-           // se.interrupt();
         } catch (IOException ex) {
             Logger.getLogger(ServerSustava.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
+    /**
+     * Metoda ucitava serijaliziranu evidenciju iz datoeke.
+     *
+     * @param datEvid - naziv datoteke
+     */
     private void ucitajSerijaliziranuEvidenciju(String datEvid) {
         File dat = new File(datEvid);
         if (!dat.exists()) {
@@ -146,9 +154,14 @@ public class ServerSustava {
             return;
         }
         SerijalizatorEvidencije.deserijalizator(datEvid);
-        //SerijalizatorEvidencije.citanjeEvidencije(datEvid); //samo za prikaz podatka na početku
     }
 
+    /**
+     * Metoda vraca ukoliko postoji slobodnu dretvu.
+     *
+     * @param dretve - lista dretvi za obradu zahjteva
+     * @return dretva ili null
+     */
     private ObradaZahtjeva dajSlobodnuDretvu(List<ObradaZahtjeva> dretve) {
         int indexDretve;
         ObradaZahtjeva[] pomDretva = new ObradaZahtjeva[1];
@@ -166,18 +179,38 @@ public class ServerSustava {
         return null;
     }
 
+    /**
+     * Metoda provjerava da li je server u stanju pauze.
+     *
+     * @return true ili false
+     */
     public static boolean isPauza() {
         return pauza;
     }
 
+    /**
+     * Metoda postavlja server u pauzu ili ne.
+     *
+     * @param pauza - true ili false
+     */
     public static void setPauza(boolean pauza) {
         ServerSustava.pauza = pauza;
     }
 
+    /**
+     * Metoda provjerava da li je server u stanju stop.
+     *
+     * @return true ili false
+     */
     public static boolean isStop() {
         return stop;
     }
 
+    /**
+     * Metoda postavlja server u stanje stop ili ne.
+     *
+     * @param stop - true ili false
+     */
     public static void setStop(boolean stop) {
         ServerSustava.stop = stop;
     }
