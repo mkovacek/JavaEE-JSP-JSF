@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.pregledPoruke_naslov}</title>
+            <h:outputStylesheet library="css" name="osnovna.css" />
+        </h:head>
+        <h:body>
+            <h:link value="#{m.pregledPoruke_odabirJezika}" outcome="index.xhtml" />&nbsp;
+            <h:link value="#{m.pregledPoruke_povezivanje}" outcome="emailPostavke.xhtml" />&nbsp;
+            <h:link value="#{m.pregledPoruke_popisPoruka}" outcome="pregledSvihPoruka.xhtml" />
+            <br/><br/>
+            #{m.pregledPoruke_pregledPoruke}<br/><br/>
+             <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{m.pregledPoruke_poslano}: " />
+                    <h:outputText value="#{pregledPoruke.poruka.vrijeme}">
+                        <f:convertDateTime pattern="dd.MM.yyyy hh:mm:ss" />
+                    </h:outputText>
+                    <h:outputLabel value="#{m.pregledPoruke_salje}: " />
+                    <h:outputText value="#{pregledPoruke.poruka.salje}" />
+                    <h:outputLabel value="#{m.pregledPoruke_predmet}: " />
+                    <h:outputText value="#{pregledPoruke.poruka.predmet}" />
+                    <h:outputLabel value="#{m.pregledPoruke_poruka}: " />
+                    <h:outputText escape="false" value="#{pregledPoruke.poruka.tekst}" />
+                </h:panelGrid>               
+            </h:form>            
+        </h:body>
+    </f:view>
+</html>

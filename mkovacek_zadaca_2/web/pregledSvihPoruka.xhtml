@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.pregledSvihPoruka_naslov}</title>
+            <h:outputStylesheet library="css" name="osnovna.css" />
+        </h:head>
+        <h:body>
+            <h:link value="#{m.pregledSvihPoruka_odabirJezika}" outcome="index.xhtml" />&nbsp;
+            <h:link value="#{m.pregledSvihPoruka_povezivanje}" outcome="emailPostavke.xhtml" />
+            <br/>
+            #{m.pregledSvihPoruka_pregledSvihPoruka}<br/><br/>
+            <h:form>
+                <h:selectOneListbox value="#{pregledSvihPoruka.odabranaMapa}">
+                    <f:selectItems value="#{pregledSvihPoruka.mape}" />
+                </h:selectOneListbox>
+                <br/>
+                <h:commandButton class="gumb" value="#{m.pregledSvihPoruka_odaberiMapu}" action="#{pregledSvihPoruka.odaberiMapu()}" />
+            </h:form><br/>
+            <h:form>
+                <h:dataTable value="#{pregledSvihPoruka.poruke}" var="p"
+                             class="tablica" headerClass="zaglavlje"
+                             rowClasses="neparni,parni">
+                    <h:column>
+                        <f:facet name="header">#{m.pregledSvihPoruka_salje}</f:facet>
+                            #{p.salje}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">#{m.pregledSvihPoruka_predmet}</f:facet>
+                            #{p.predmet}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">#{m.pregledSvihPoruka_poslano}</f:facet>
+                        <h:outputText value="#{p.vrijeme}">
+                            <f:convertDateTime pattern="dd.MM.yyyy hh:mm:ss" />
+                        </h:outputText>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">#{m.pregledSvihPoruka_format}</f:facet>
+                            #{p.vrsta}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">#{m.pregledSvihPoruka_pregledSadrzaja}</f:facet>
+                        <h:commandButton class="gumb" value="#{m.pregledSvihPoruka_pregled}" action="#{pregledSvihPoruka.pregledPoruke()}">
+                            <f:param name="porukaID" value="#{p.id}" />
+                        </h:commandButton>
+                    </h:column>
+                </h:dataTable>
+                <h:commandButton class="gumb" rendered="#{pregledSvihPoruka.prethodna}" value="#{m.pregledSvihPoruka_prethodna}" action="#{pregledSvihPoruka.prethodna()}" />&nbsp;
+                <h:commandButton class="gumb" rendered="#{pregledSvihPoruka.sljedeca}" value="#{m.pregledSvihPoruka_slijedeca}" action="#{pregledSvihPoruka.sljedeca()}" />
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

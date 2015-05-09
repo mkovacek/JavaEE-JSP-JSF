@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.emailPostavke_naslov}</title>
+        </h:head>
+        <h:body>
+            <h:link value="#{m.emailPostavke_odabirJezika}" outcome="index.xhtml" /><br/>
+            #{m.emailPostavke_postavke}
+            <h:form>
+                <h:panelGrid columns="3">
+                    <h:outputLabel value="#{m.emailPostavke_posluzitelj}" />
+                    <h:inputText id="server" value="#{emailPovezivanje.server}" required="true" requiredMessage="Server is required" />
+                    <h:message id="m1" for="server" style="color:red"/>
+                    <h:outputLabel value="#{m.emailPostavke_korisnik}" />
+                    <h:inputText id="user" value="#{emailPovezivanje.korisnik}" required="true" requiredMessage="Username is required" validatorMessage="Incorect email format">
+                        <f:validateRegex pattern="^[\w+-]+(?:\.[\w+-]+)*@[\w+-]+(?:\.[\w+-]+)*(?:\.[a-zA-Z]{2,4})$" />
+                    </h:inputText>
+                    <h:message id="m2" for="user" style="color:red"/>
+                    <h:outputLabel value="#{m.emailPostavke_lozinka}"  />
+                    <h:inputSecret id="pass" value="#{emailPovezivanje.lozinka}"  required="true" requiredMessage="Password is required" validatorMessage="Minimum 6 characters">
+                        <f:validateLength minimum="6"/> 
+                    </h:inputSecret>    
+                    <h:message id="m3" for="pass" style="color:red"/>
+                    <h:commandButton value="#{m.emailPostavke_saljiPoruke}" action="#{emailPovezivanje.saljiPoruku()}" />
+                    <h:commandButton value="#{m.emailPostavke_citajPoruke}" action="#{emailPovezivanje.citajPoruke()}" />
+                </h:panelGrid>
+                <br/><br/>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

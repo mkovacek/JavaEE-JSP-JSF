@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.slanjePoruke_naslov}</title>
+        </h:head>
+        <h:body>
+            <h:link value="#{m.slanjePoruke_odabirJezika}" outcome="index.xhtml" /><br/>
+            #{m.slanjePoruke_slanjePoruke}
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{m.slanjePoruke_salje}" />
+                    <h:inputText value="#{slanjePoruke.salje}" />
+                    <h:outputLabel value="#{m.slanjePoruke_prima}" />
+                    <h:inputText value="#{slanjePoruke.prima}" />
+                    <h:outputLabel value="#{m.slanjePoruke_predmet}" />
+                    <h:inputText value="#{slanjePoruke.predmet}" />
+                    <h:outputLabel value="#{m.slanjePoruke_format}" />
+                    <h:selectOneRadio value="#{slanjePoruke.format}" required="true">
+                        <f:selectItems value="#{slanjePoruke.formati}"/>
+                    </h:selectOneRadio>
+                    <h:outputLabel value="#{m.slanjePoruke_poruka}" />
+                    <h:inputTextarea cols="70" rows="7" value="#{slanjePoruke.poruka}" />
+                    <h:commandButton value="#{m.slanjePoruke_saljiPoruku}" action="#{slanjePoruke.saljiPoruku}" />
+                </h:panelGrid>               
+            </h:form><br/><br/>
+            <h:outputText value="#{m.slanjePoruke_poslano}" rendered="#{slanjePoruke.poslano}" />
+            <h:outputText value="#{m.slanjePoruke_nijePoslano}" rendered="#{slanjePoruke.nijePoslano}" />            
+        </h:body>
+    </f:view>
+</html>
+
