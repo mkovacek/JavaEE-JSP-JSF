@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>mkovacek_zadaca_3_2</title>
+        <h:outputStylesheet library="css" name="osnovna.css" />
+    </h:head>
+    <h:body>
+        <h:link value="Početna" outcome="index.xhtml" /><br/><br/>
+        <h:dataTable value="#{odabirAdresa.popisAdresa}" var="a" class="tablica" 
+                     headerClass="zaglavlje" rowClasses="neparni,parni">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                #{a.idadresa}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Adresa</f:facet>
+                #{a.adresa}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Latitude</f:facet>
+                #{a.geoloc.latitude}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Longitude</f:facet>
+                #{a.geoloc.longitude}
+            </h:column>
+        </h:dataTable>
+    </h:body>
+</html>
+
