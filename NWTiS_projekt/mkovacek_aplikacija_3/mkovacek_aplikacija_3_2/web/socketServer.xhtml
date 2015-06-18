@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>3.aplikacija</title>
+    </h:head>
+    <h:body>
+        <h:link value="Nazad" outcome="/index.xhtml"/><br/><br/>
+        <h2>Socket server</h2><br/>  
+
+        <h:form id="formaSlanjeZahtjeva">
+            <h:panelGrid columns="3">
+                <h:outputLabel>Zahtjev: </h:outputLabel>
+                <h:inputTextarea cols="100" id="zahtjev" value="#{pregledSlanjeZahtjeva.zahtjev}" required="true" requiredMessage="Obavezan unos"/>
+                <h:message id="m1" for="zahtjev" style="color:red"/>
+                <h:commandButton value="Pošalji" action="#{pregledSlanjeZahtjeva.slanjezahtjeva()}" >
+                    <f:ajax execute="formaSlanjeZahtjeva" render=":formaSlanjeZahtjeva"/>
+                </h:commandButton>
+                <h:outputText style="color:green" value="OK 10" rendered="#{pregledSlanjeZahtjeva.prikaz10}"/>
+                <h:outputText style="color:red" value="ERR 20; Ne postoji korisnik ili ne odgovara lozinka" rendered="#{pregledSlanjeZahtjeva.prikaz20}"/>
+                <h:outputText style="color:red" value="ERR 21; Korisnik nije Admin" rendered="#{pregledSlanjeZahtjeva.prikaz21}"/>
+                <h:outputText style="color:red" value="ERR 30; Bio u pauzi" rendered="#{pregledSlanjeZahtjeva.prikaz30}"/>
+                <h:outputText style="color:red" value="ERR 31; Nije bio u pauzi" rendered="#{pregledSlanjeZahtjeva.prikaz31}"/>
+                <h:outputText style="color:red" value="ERR 32; U postupku prekida" rendered="#{pregledSlanjeZahtjeva.prikaz32}"/>
+                <h:outputText style="color:red" value="ERR 33; Ne postoji korisnik" rendered="#{pregledSlanjeZahtjeva.prikaz33}"/>
+                <h:outputText style="color:red" value="ERR 34; Vec ima ulogu administratora" rendered="#{pregledSlanjeZahtjeva.prikaz34}"/>
+                <h:outputText style="color:red" value="ERR 35; Nema ulogu administratora" rendered="#{pregledSlanjeZahtjeva.prikaz35}"/>
+                <h:outputText style="color:red" value="ERR 36; Ne postoji cjenik ili problemi u radu s njime" rendered="#{pregledSlanjeZahtjeva.prikaz36}"/>
+                <h:outputText style="color:red" value="ERR 37; Problemi u radu s njime" rendered="#{pregledSlanjeZahtjeva.prikaz37}"/>
+                <h:outputText style="color:red" value="ERR 40; Nedovoljno sredstava" rendered="#{pregledSlanjeZahtjeva.prikaz40}"/>
+                <h:outputText style="color:red" value="ERR 41; Vec se preuzimaju podaci" rendered="#{pregledSlanjeZahtjeva.prikaz41}"/>
+                <h:outputText style="color:red" value="ERR 42; Adresa ne postoji u evidenciji" rendered="#{pregledSlanjeZahtjeva.prikaz42}"/>
+                <h:outputText style="color:red" value="ERR 43; Ne postoje meteo podaci" rendered="#{pregledSlanjeZahtjeva.prikaz43}"/>
+                <h:outputText style="color:red" value="OK 10; običan korisnik" rendered="#{pregledSlanjeZahtjeva.prikaz10T}"/>
+                <h:outputText style="color:red" value="OK 11; admin" rendered="#{pregledSlanjeZahtjeva.prikaz11}"/>
+                <h:outputText style="color:red" value="ERR 50; korisnik vec postoji" rendered="#{pregledSlanjeZahtjeva.prikaz50}"/>
+                <h:outputText style="color:red" value="Krivi zahtjev!" rendered="#{pregledSlanjeZahtjeva.error}"/>
+            </h:panelGrid>
+        </h:form>
+
+
+    </h:body>
+</html>
+

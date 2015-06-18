@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Cjenik usluga</comment>
+<entry key="ADD">2.00</entry>
+<entry key="TEST">1.00</entry>
+<entry key="GET">1.50</entry>
+<entry key="dajVazeceMeteoPodatkeZaAdresu">3.00</entry>
+<entry key="dajSveKorisnikoveAdrese">4.50</entry>
+<entry key="dajRangListuAdresaNajviseMeteoPodataka">5.00</entry>
+<entry key="dajNzadnjihMeteoPodatakaZaAdresu">5.50</entry>
+<entry key="dajMeteoPodatkeZaAdresuOdDo">3.50</entry>
+<entry key="dajMeteoPrognozuZaAdresu">5.00</entry>
+<entry key="dajVremenskeStaniceZaOdabranuAdresu">2.50</entry>
+<entry key="dajVremenskuPrognozuZaOdabranuAdresuSatima">5.00</entry>
+<entry key="dajSveAdrese">5.00</entry>
+</properties>

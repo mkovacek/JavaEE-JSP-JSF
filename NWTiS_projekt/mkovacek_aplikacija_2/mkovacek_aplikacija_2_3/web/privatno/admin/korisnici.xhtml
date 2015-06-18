@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.korisnici_naslov}</title>
+        </h:head>
+        <h:body>
+            <h:link value="#{m.global_back}" outcome="#{m.global_back}"/><br/>
+            <h:link value="#{m.korisnici_odabirJezika}" outcome="#{m.korisnici_odabirJezika}"/><br/><br/>
+            <h2>#{m.korisnici_naslov}</h2>
+            <br/>
+
+            <h:form id="pregledKorisnika">
+                <h:outputText style="color:red" value="#{m.korisnici_error}" rendered="#{pregledKorisnika.nemaRezultata}"/>
+                <p:dataTable id="korisnici" var="kor" value="#{pregledKorisnika.korisnici}" selectionMode="single" 
+                             selection="#{pregledKorisnika.odabraniKorisnik}" rowKey="#{kor.id}"
+                             paginator="true" rows="#{pregledKorisnika.stranicenje}"  
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                    <p:column headerText="#{m.korisnici_id}">
+                        <h:outputText value="#{kor.id}" />
+                    </p:column>
+                    <p:column headerText="#{m.korisnici_korime}">
+                        <h:outputText value="#{kor.korime}" />
+                    </p:column>
+                    <p:column headerText="#{m.korisnici_ime}">
+                        <h:outputText value="#{kor.ime}" />
+                    </p:column>
+                    <p:column headerText="#{m.korisnici_prezime}">
+                        <h:outputText value="#{kor.prezime}" />
+                    </p:column>
+                    <p:column headerText="#{m.korisnici_lozinka}">
+                        <h:outputText value="#{kor.lozinka}" />
+                    </p:column>
+                    <p:column headerText="#{m.korisnici_email}">
+                        <h:outputText value="#{kor.emailAdresa}" />
+                    </p:column>
+                    <p:column headerText="#{m.korisnici_vrsta}">
+                        <h:outputText value="#{kor.vrsta}" />
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton value="#{m.korisnici_azuriranje}" action="#{pregledKorisnika.azuriranje()}">
+                            <f:ajax execute="korisnici" render=":pregledKorisnika :formaAzuriranjePodataka"/>
+                        </p:commandButton>
+                    </f:facet>
+                </p:dataTable>
+            </h:form>
+            <h:form id="formaAzuriranjePodataka">
+                <h:panelGrid columns="1" rendered="#{pregledKorisnika.prikazForme}">
+                    <h:commandButton value="#{m.korisnici_zatvori}" action="#{pregledKorisnika.zatvoriFormu}" >
+                        <f:ajax render=":formaAzuriranjePodataka"/>
+                    </h:commandButton> 
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{m.korisnici_korime}" />
+                        <h:inputText id="username" value="#{pregledKorisnika.korisnik.korime}" disabled="true"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3">
+
+                        <h:outputLabel value="#{m.korisnici_lozinka}"  />
+                        <h:inputText id="lozinka" value="#{pregledKorisnika.korisnik.lozinka}"  required="true" requiredMessage="#{m.sett_lozinkaM}"/> 
+                        <h:message id="m4" for="lozinka" style="color:red"/>
+
+
+                        <h:outputLabel value="#{m.korisnici_ime}"  />
+                        <h:inputText id="ime" value="#{pregledKorisnika.korisnik.ime}"  required="false" requiredMessage="#{m.sett_imeM}"/> 
+                        <h:message id="m1" for="ime" style="color:red"/>
+
+                        <h:outputLabel value="#{m.korisnici_prezime}"  />
+                        <h:inputText id="prezime" value="#{pregledKorisnika.korisnik.prezime}"  required="false" requiredMessage="#{m.sett_prezimeM}"/> 
+                        <h:message id="m2" for="prezime" style="color:red"/>
+
+                        <h:outputLabel value="#{m.korisnici_email}"  />
+                        <h:inputText id="email" value="#{pregledKorisnika.korisnik.emailAdresa}"  required="false" requiredMessage="#{m.sett_emailM}"/>
+                        <h:message id="m3" for="email" style="color:red"/>
+                        
+                        <h:outputLabel value="#{m.korisnici_vrsta2}"  />
+                        <h:inputText id="vrsta" value="#{pregledKorisnika.korisnik.vrsta}"  required="true" requiredMessage="#{m.sett_prezimeM}"/> 
+                        <h:message id="m5" for="vrsta" style="color:red"/>
+                    </h:panelGrid>
+                    <h:outputText style="color:red" value="#{m.korisnici_error}" rendered="#{pregledKorisnika.greska}"/>
+                    <h:outputText style="color:green" value="#{m.korisnici_azurirano}" rendered="#{pregledKorisnika.azurirano}"/>
+                    <h:commandButton value="#{m.sett_btn}" action="#{pregledKorisnika.azurirajPodatke()}" >
+                        <f:ajax execute="formaAzuriranjePodataka" render=":pregledKorisnika :formaAzuriranjePodataka"/>
+                    </h:commandButton> 
+                </h:panelGrid>            
+                <br/><br/>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
+
+

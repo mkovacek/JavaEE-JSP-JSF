@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>NWTIS konfiguracija</comment>
+<entry key="server.database">jdbc:derby://localhost:1527/</entry>
+<entry key="server.database2">jdbc:mysql://localhost:3306/</entry>
+<entry key="admin.username">nwtis_mkovacek_bp_2</entry>
+<entry key="admin.password">nwtis_mkovacek</entry>
+<entry key="admin.database">nwtis_mkovacek_bp_2_v2</entry>
+<entry key="user.username">nwtis_mkovacek_bp_2</entry>
+<entry key="user.password">nwtis_mkovacek</entry>
+<entry key="user.database">nwtis_mkovacek_bp_2_v2</entry>
+<entry key="driver.database.odbc">sun.jdbc.odbc.JdbcOdbcDriver</entry>
+<entry key="driver.database.mysql">com.mysql.jdbc.Driver</entry>
+<entry key="driver.database.derby">org.apache.derby.jdbc.ClientDriver</entry>
+<entry key="driver.database.postgresql">org.postgresql.Driver</entry>
+<entry key="apiKey">e0106ebd9d3390c88e3cf08a3de01fe4</entry>
+<entry key="sleep">20</entry>
+<entry key="port">2601</entry>
+<entry key="evidDatoteka">NWTiS_evidencija.bin</entry>
+<entry key="intervalSerijalizacije">10</entry>
+<entry key="adminDatoteka">admini.txt</entry>
+<entry key="emailServer">127.0.0.1</entry>
+<entry key="user">servis@nwtis.nastava.foi.hr</entry>
+<entry key="password">123456</entry>
+<entry key="subject">NWTiS poruka</entry>
+<entry key="mapa">podaci</entry>
+<entry key="ispravnePoruke">NWTiS_IspravnePoruke</entry>
+<entry key="ostalePoruke">NWTiS_OstalePoruke</entry>
+<entry key="email">admin@nwtis.nastava.foi.hr</entry>
+<entry key="predmet">Dodaj korisnika</entry>
+<entry key="direktorij">Sent</entry>
+<entry key="stranicenje">10</entry>
+</properties>

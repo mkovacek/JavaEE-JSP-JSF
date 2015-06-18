@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>NWTIS konfiguracija</comment>
+<entry key="apiKey">e0106ebd9d3390c88e3cf08a3de01fe4</entry>
+<entry key="sleep">60</entry>
+<entry key="socketPort">9998</entry>
+<entry key="socketServer">127.0.0.1</entry>
+<entry key="emailPort">143</entry>
+<entry key="emailServer">127.0.0.1</entry>
+<entry key="user">servis@nwtis.nastava.foi.hr</entry>
+<entry key="password">654321</entry>
+<entry key="ispravnePoruke">NWTiS_IspravnePoruke</entry>
+<entry key="ostalePoruke">NWTiS_OstalePoruke</entry>
+<entry key="email">admin@nwtis.nastava.foi.hr</entry>
+<entry key="predmet">Dodaj korisnika</entry>
+<entry key="direktorij">Sent</entry>
+<entry key="stranicenje">10</entry>
+</properties>

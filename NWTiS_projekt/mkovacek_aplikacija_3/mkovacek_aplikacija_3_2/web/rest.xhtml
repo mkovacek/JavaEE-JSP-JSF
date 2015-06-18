@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>3.aplikacija</title>
+    </h:head>
+    <h:body>
+        <h:link value="Nazad" outcome="/index.xhtml"/><br/><br/>
+        <h2>REST</h2><br/>  
+        <h:form id="formaDajAktivneKorisnike">
+            <h:commandButton value="Daj aktivne korisnike" action="#{pregledAktivnihKorisnika.dajAktivneKorisnike()}" >
+                <f:ajax execute="formaDajAktivneKorisnike" render=":formaAktivniKorisnici"/>
+            </h:commandButton>
+        </h:form>
+
+        <h:panelGrid>
+            <h:form id="formaAktivniKorisnici" >
+                <h:panelGrid rendered="#{pregledAktivnihKorisnika.tblAktivniKorisnici}" >
+                    <h:commandButton value="Zatvori" action="#{pregledAktivnihKorisnika.zatvoriAktivneKorisnike}" >
+                        <f:ajax render=":formaAktivniKorisnici"/>
+                    </h:commandButton> 
+                    <p:dataTable id="aktivniKorisnici" var="p" value="#{pregledAktivnihKorisnika.aktivniKorisnici}" selectionMode="single" 
+                                 selection="#{pregledAktivnihKorisnika.odabraniKorisnik}" rowKey="#{p.id}"
+                                 paginator="true" rows="#{pregledAktivnihKorisnika.stranicenje}"  
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                        <f:facet name="header">
+                            Aktivni korisnici
+                        </f:facet>
+                        <p:column headerText="Korisničko ime">
+                            <h:outputText value="#{p.korIme}" />
+                        </p:column>
+                        <p:column headerText="Ime">
+                            <h:outputText value="#{p.ime}" />
+                        </p:column>
+                        <p:column headerText="Prezime">
+                            <h:outputText value="#{p.prezime}" />
+                        </p:column>
+                        <p:column headerText="Lozinka">
+                            <h:outputText value="#{p.lozinka}" />
+                        </p:column>
+                        <p:column headerText="Email">
+                            <h:outputText value="#{p.email}" />
+                        </p:column>
+                        <p:column headerText="Vrsta">
+                            <h:outputText value="#{p.tip}" />
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton value="Korisnikove adrese" action="#{pregledAktivnihKorisnika.dajKorisnikoveAdrese()}">
+                                <f:ajax execute="aktivniKorisnici" render=":formaKorisnikoveAdrese"/>
+                            </p:commandButton>
+                        </f:facet>
+                    </p:dataTable>
+                </h:panelGrid>
+            </h:form>
+        </h:panelGrid>
+
+        <h:panelGrid>
+            <h:form id="formaKorisnikoveAdrese" >
+                <h:panelGrid rendered="#{pregledAktivnihKorisnika.tblKorisnikoveAdrese}" >
+                    <h:commandButton value="Zatvori" action="#{pregledAktivnihKorisnika.zatvoriKorisnikoveAdrese}" >
+                        <f:ajax render=":formaKorisnikoveAdrese"/>
+                    </h:commandButton> 
+                    <p:dataTable id="korisnikoveAdrese" var="a" value="#{pregledAktivnihKorisnika.korisnikoveAdrese}" selectionMode="single" 
+                                 selection="#{pregledAktivnihKorisnika.odabranaAdresa}" rowKey="#{a.idadresa}"
+                                 paginator="true" rows="#{pregledAktivnihKorisnika.stranicenje}"  
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                        <f:facet name="header">
+                            Korisnikove adrese
+                        </f:facet>
+                        <p:column headerText="Adresa">
+                            <h:outputText value="#{a.adresa}" />
+                        </p:column>
+                        <p:column headerText="Latitude">
+                            <h:outputText value="#{a.geoloc.latitude}" />
+                        </p:column>
+                        <p:column headerText="Longitude">
+                            <h:outputText value="#{a.geoloc.longitude}" />
+                        </p:column>
+                        <p:column headerText="Dodao">
+                            <h:outputText value="#{a.korisnik}" />
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton value="Važeći meteo podaci" action="#{pregledAktivnihKorisnika.dajMeteoPodatke()}">
+                                <f:ajax execute="korisnikoveAdrese" render=":formaMeteoPodaci"/>
+                            </p:commandButton>
+                        </f:facet>
+                    </p:dataTable>
+                </h:panelGrid>
+            </h:form>
+        </h:panelGrid>
+        <h:panelGrid>
+            <h:form id="formaMeteoPodaci" >
+                <h:panelGrid rendered="#{pregledAktivnihKorisnika.trenutniMeteoPodaci}">
+                    <h:commandButton value="Zatvori" action="#{pregledAktivnihKorisnika.zatvoriMeteoPodatke}" >
+                        <f:ajax render="formaMeteoPodaci"/>
+                    </h:commandButton> <br/>
+                    <h:outputText value="#{pregledAktivnihKorisnika.meteoPodaci}" />
+                    <h:outputText value="Nepostoje podaci" style="color: red" rendered="#{pregledAktivnihKorisnika.nepostojePodaci}" />
+                    <h:outputText value="Nedovoljno sredstava" style="color: red" rendered="#{pregledAktivnihKorisnika.nedovoljnoSredstava}" />
+                </h:panelGrid>
+            </h:form>
+        </h:panelGrid>
+    </h:body>
+</html>
+

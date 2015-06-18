@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.home_naslov}</title>
+        </h:head>
+        <h:body>
+            <h:link value="#{m.home_odabirJezika}" outcome="#{m.home_odabirJezika}"/><br/><br/>
+            <h2>#{m.home_naslov}</h2>
+            <br/>
+            <h:link value="#{m.home_settings}" outcome="#{m.home_settings}"/><br/><br/>
+            <h:link value="#{m.home_meteoAdrese}" outcome="#{m.home_meteoAdrese}"/><br/><br/>
+            <h:inputHidden value="#{auth.userHome}"/> 
+        </h:body>
+    </f:view>
+</html>

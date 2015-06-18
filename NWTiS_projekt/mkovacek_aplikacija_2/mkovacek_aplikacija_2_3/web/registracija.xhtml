@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.reg_naslov}</title>
+        </h:head>
+        <h:body>
+            <h:link value="#{m.reg_odabirJezika}" outcome="index.xhtml"/><br/><br/>
+            <h2>#{m.reg_naslov}</h2>
+            <br/>
+            <h:form id="registracija">
+                <h:panelGrid columns="3" id="matchGrid">
+                    <h:outputLabel value="#{m.reg_korIme}" />
+                    <h:inputText id="username" value="#{registracija.korIme}" required="true" requiredMessage="#{m.reg_korImeM}" />
+                    <h:message id="m1" for="username" style="color:red"/>
+
+                    <h:outputLabel value="#{m.reg_lozinka}"  />
+                    <h:inputSecret id="pass" value="#{registracija.lozinka}"  required="true" requiredMessage="#{m.reg_lozinkaM}" validatorMessage="#{m.reg_lozinkaL}">
+                        <f:validateLength minimum="5"/> 
+                    </h:inputSecret>    
+                    <h:message id="m2" for="pass" style="color:red"/>
+
+                    <h:outputLabel value="#{m.reg_ponLozinka}"  />
+                    <h:inputSecret id="pass2" value="#{registracija.ponLozinka}" required="true" requiredMessage="#{m.reg_ponLozinkaM}" validatorMessage="#{m.reg_ponLozinkaL}">
+                        <f:validateLength minimum="5"/> 
+                    </h:inputSecret>    
+                    <h:message id="m3" for="pass2" style="color:red"/>
+                    <h:outputText style="color:red" value="#{m.reg_diffPass}" rendered="#{registracija.diffPasswords}"/>
+                    <h:outputText style="color:red" value="#{m.reg_error}" rendered="#{registracija.error}"/>
+                    <h:outputText style="color:green" value="#{m.reg_success}" rendered="#{registracija.uspjesnaRegistracija}"/>
+                </h:panelGrid>
+                <h:commandButton value="#{m.reg_btn}" action="#{registracija.registracija()}" >
+                    <f:ajax execute="registracija" render=":registracija"/>
+                </h:commandButton>
+                <br/><br/>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
+

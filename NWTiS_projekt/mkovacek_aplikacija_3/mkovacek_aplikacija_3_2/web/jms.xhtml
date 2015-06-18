@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>3.aplikacija</title>
+        <h:outputScript library="js" name="websocket.js"/>
+    </h:head>
+    <h:body>
+        <h:link value="Nazad" outcome="/index.xhtml"/><br/>
+        <h2>JMS poruke</h2><br/>        
+        <h2 id="websocketMsg" style="color: red"></h2>
+        <h:form id="pregledJMSPorukaEmail">
+            <p:dataTable id="JMSemailPoruke" var="p" value="#{pregledJMS.email}" selectionMode="single" 
+                         selection="#{pregledJMS.odabranEmail}" rowKey="#{p.vrijemePocetak}"
+                         paginator="true" rows="#{pregledJMS.stranicenje}"  
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                <f:facet name="header">
+                    JMS email
+                </f:facet>
+                <p:column headerText="Vrijeme početka">
+                    <h:outputText value="#{p.vrijemePocetak}" />
+                </p:column>
+                <p:column headerText="Vrijeme kraja">
+                    <h:outputText value="#{p.vrijemeKraj}" />
+                </p:column>
+                <p:column headerText="Broj pročitanih poruka">
+                    <h:outputText value="#{p.brojProcitanihPoruka}" />
+                </p:column>
+                <p:column headerText="Broj NWTiS poruka">
+                    <h:outputText value="#{p.brojNWTiSporuka}" />
+                </p:column>
+                <p:column headerText="Dodani korisnici">
+                    <ui:repeat value="#{p.dodaniKorisnici}" var="dk" >
+                        <h:panelGrid columns="2">
+                            <h:outputText  value="#{dk.korIme}"/>
+                            <h:outputText  value="#{dk.lozinka}"/>
+                        </h:panelGrid> 
+                    </ui:repeat>
+                </p:column>
+                <p:column headerText="Ne dodani korisnici">
+                    <ui:repeat value="#{p.ostaliKorisnici}" var="ok" >
+                        <h:panelGrid columns="2">
+                            <h:outputText  value="#{ok.korIme}"/>
+                            <h:outputText  value="#{ok.lozinka}"/>
+                        </h:panelGrid> 
+                    </ui:repeat>
+                </p:column>
+                <f:facet name="footer">
+                    <p:commandButton value="Brisanje poruke" action="#{pregledJMS.brisanjeEmail()}">
+                        <f:ajax execute="JMSemailPoruke" render=":pregledJMSPorukaEmail :obrisanEmail "/>
+                    </p:commandButton>
+                    <p:commandButton value="Brisanje svih poruka" action="#{pregledJMS.brisanjeSvihEmail()}">
+                        <f:ajax execute="JMSemailPoruke" render=":pregledJMSPorukaEmail :obrisanEmail"/>
+                    </p:commandButton>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        <h:panelGrid id="obrisanEmail">
+            <h:outputText style="color: green" value="Obrisano" rendered="#{pregledJMS.obrisanEmail}"/>
+        </h:panelGrid>
+        <br/><br/>
+        <h:form id="pregledJMSPorukaAdrese">
+            <p:dataTable id="JMSAdresePoruke" var="p" value="#{pregledJMS.adrese}" selectionMode="single" 
+                         selection="#{pregledJMS.odabranaAdresa}" rowKey="#{p.adresa}"
+                         paginator="true" rows="#{pregledJMS.stranicenje}"  
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                <f:facet name="header">
+                    JMS adrese
+                </f:facet>
+                <p:column headerText="Korisnik">
+                    <h:outputText value="#{p.korisnik}" />
+                </p:column>
+                <p:column headerText="Lozinka">
+                    <h:outputText value="#{p.lozinka}" />
+                </p:column>
+                <p:column headerText="Adresa">
+                    <h:outputText value="#{p.adresa}" />
+                </p:column>
+                <f:facet name="footer">
+                    <p:commandButton value="Brisanje poruke" action="#{pregledJMS.brisanjeAdresa()}">
+                        <f:ajax execute="JMSAdresePoruke" render=":pregledJMSPorukaAdrese :obrisanaAdresa "/>
+                    </p:commandButton>
+                    <p:commandButton value="Brisanje svih poruka" action="#{pregledJMS.brisanjeSvihAdresa()}">
+                        <f:ajax execute="JMSAdresePoruke" render=":pregledJMSPorukaAdrese :obrisanaAdresa"/>
+                    </p:commandButton>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        <h:panelGrid id="obrisanaAdresa">
+            <h:outputText style="color: green" value="Obrisano" rendered="#{pregledJMS.obrisanaAdresa}"/>
+        </h:panelGrid>
+
+        <h:form id="formaDodajKorisnika">
+            <h:panelGrid columns="3">
+                <h:outputLabel>Zahtjev za dodavanje korisnika: </h:outputLabel>
+                <h:inputTextarea cols="100" id="zahtjev" value="#{pregledJMS.zahtjev}" required="true" requiredMessage="Obavezan unos"/>
+                <h:message id="m1" for="zahtjev" style="color:red"/>
+                <h:commandButton value="Pošalji" action="#{pregledJMS.kreirajKorisnika()}" >
+                    <f:ajax execute=":formaDodajKorisnika" render=":formaDodajKorisnika"/>
+                </h:commandButton>
+                <h:outputText style="color:red" value="Greška, korisnik postoji" rendered="#{pregledJMS.nijePoslanZahtjev}"/>
+                <h:outputText style="color:green" value="Poslano" rendered="#{pregledJMS.poslanZahtjev}"/>
+            </h:panelGrid>
+        </h:form>
+
+    </h:body>
+</html>
+

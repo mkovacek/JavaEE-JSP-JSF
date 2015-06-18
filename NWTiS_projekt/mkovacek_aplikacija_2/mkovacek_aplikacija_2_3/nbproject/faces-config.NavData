@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="login.xhtml" x="650" y="450" zoom="true"/>
+        <Node id="privatno/admin/korisnici.xhtml" x="150" y="300" zoom="true"/>
+        <Node id="index.xhtml" x="650" y="300" zoom="true"/>
+        <Node id="privatno/user/home.xhtml" x="400" y="450" zoom="true"/>
+        <Node id="privatno/admin/cjenik.xhtml" x="400" y="150" zoom="true"/>
+        <Node id="privatno/admin/emailPoruke.xhtml" x="150" y="150" zoom="true"/>
+        <Node id="privatno/admin/dnevnik.xhtml" x="150" y="600" zoom="true"/>
+        <Node id="privatno/user/meteoAdrese.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="privatno/settings.xhtml" x="900" y="150" zoom="true"/>
+        <Node id="registracija.xhtml" x="400" y="300" zoom="true"/>
+        <Node id="privatno/admin/adminPanel.xhtml" x="342" y="11" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

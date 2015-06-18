@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.sett_naslov}</title>
+        </h:head>
+        <h:body>
+            <h:link value="#{m.global_back}" outcome="#{m.global_back}"/><br/>
+            <h:link value="#{m.sett_odabirJezika}" outcome="#{m.sett_odabirJezika}"/><br/><br/>
+            <h2>#{m.sett_naslov}</h2>
+            <br/>
+            <h:form>
+                <h:panelGrid columns="1">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{m.sett_korIme}" />
+                        <h:inputText id="username" value="#{settings.korisnik.korime}" disabled="true"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="3">
+                        
+                        <h:outputLabel value="#{m.sett_lozinka}"  />
+                        <h:inputText id="lozinka" value="#{settings.korisnik.lozinka}"  required="true" requiredMessage="#{m.sett_lozinkaM}"/> 
+                        <h:message id="m4" for="lozinka" style="color:red"/>
+
+                        
+                        <h:outputLabel value="#{m.sett_ime}"  />
+                        <h:inputText id="ime" value="#{settings.korisnik.ime}"  required="true" requiredMessage="#{m.sett_imeM}"/> 
+                        <h:message id="m1" for="ime" style="color:red"/>
+
+                        <h:outputLabel value="#{m.sett_prezime}"  />
+                        <h:inputText id="prezime" value="#{settings.korisnik.prezime}"  required="true" requiredMessage="#{m.sett_prezimeM}"/> 
+                        <h:message id="m2" for="prezime" style="color:red"/>
+
+                        <h:outputLabel value="#{m.sett_email}"  />
+                        <h:inputText id="email" value="#{settings.korisnik.emailAdresa}"  required="true" requiredMessage="#{m.sett_emailM}" validatorMessage="#{m.sett_emailFormatM}">
+                            <f:validateRegex pattern="^[\w+-]+(?:\.[\w+-]+)*@[\w+-]+(?:\.[\w+-]+)*(?:\.[a-zA-Z]{2,4})$" />
+                        </h:inputText> 
+                        <h:message id="m3" for="email" style="color:red"/>
+                    </h:panelGrid>
+                    <h:outputText style="color:red" value="#{m.sett_error}" rendered="#{settings.greska}"/>
+                </h:panelGrid>
+                <h:commandButton value="#{m.sett_btn}" action="#{settings.azurirajPodatke()}" />
+                <br/><br/>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
+

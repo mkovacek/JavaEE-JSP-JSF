@@ -1,0 +1,441 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:m="http://code.google.com/p/gmaps4jsf/">
+    <f:view locale="#{lokalizacija.vazecaLokalizacija}">
+        <h:head>
+            <title>#{m.meteoAdr_naslov}</title>
+            <h:outputStylesheet name="css/default.css"/>
+            <h:outputStylesheet name="css/cssLayout.css"/>
+            <script type="text/javascript"
+                    src="https://maps.googleapis.com/maps/api/js?sensor=true">
+            </script> 
+        </h:head>
+        <h:body>
+            <h:link value="#{m.global_back}" outcome="#{m.global_back}"/><br/>
+            <h:link value="#{m.meteoAdr_odabirJezika}" outcome="#{m.meteoAdr_odabirJezika}"/><br/><br/>
+            <h2>#{m.meteoAdr_naslov}</h2>
+            <br/>
+            <h:panelGrid columns="1" >
+                <h:form id="formaUnosaAdrese">
+                    <h:panelGrid columns="5" >
+                        <h:outputLabel for="novaAdresa" value="#{m.meteoAdr_novaAdresa}: "/>
+                        <h:inputText id="novaAdresa" value="#{meteoAdrese.novaAdresa}" required="true" requiredMessage="#{m.meteoAdr_novaAdresaM}"/>
+                        <h:commandButton value="#{m.meteoAdr_dodajAdresu}" action="#{meteoAdrese.dodajAdresu}" >
+                            <f:ajax execute="novaAdresa" render=":formaUnosaAdrese"/>
+                        </h:commandButton>
+                        <h:message id="m1" for="novaAdresa" style="color:red"/>
+                        <h:outputText style="color:green" value="#{m.meteoAdr_successJMS}" rendered="#{meteoAdrese.dodanaAdresa}"/>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="formaRangListaAdresa">
+                    <h:panelGrid columns="6" >
+                        <h:outputLabel for="brojAdresaRangListe" value="#{m.meteoAdr_brAdresa}: "/>
+                        <h:inputText id="brojAdresaRangListe" value="#{meteoAdrese.brojAdresaRangListe}"  converterMessage="#{m.meteoAdr_samoBroj}" required="true"  requiredMessage="#{m.meteoAdr_unosBroj}" validatorMessage="#{m.meteoAdr_brojVeci}">
+                            <f:convertNumber integerOnly="true" type="number"  />
+                            <f:validateLongRange minimum="1" maximum="10000" />
+                        </h:inputText>
+                        <h:commandButton value="#{m.meteoAdr_RangListaAdresaSNajviseMeteoPodataka}" action="#{meteoAdrese.dajRangListuAdresa}" >
+                            <f:ajax execute="brojAdresaRangListe" render=":formaRangListaAdresa"/>
+                        </h:commandButton>
+                        <h:message for="brojAdresaRangListe" style="color:red"/>
+                        <h:outputText style="color:red" value="#{m.meteoAdr_nedovoljnoSredstava}" rendered="#{meteoAdrese.nedovoljnoSredstava}"/>
+                        <h:outputText style="color:red" value="#{m.meteoAdr_nemaRangListe}" rendered="#{meteoAdrese.nemaAdresa}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" rendered="#{meteoAdrese.prikazRangListeAdresa}" style="border: solid; border-width: 1px">
+                        <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriRangListuAdresa}">
+                            <f:ajax render=":formaRangListaAdresa"/>
+                        </h:commandButton> 
+                        <h:dataTable value="#{meteoAdrese.rangListaAdresa}" var="a" class="tablica" 
+                                     headerClass="zaglavlje" rowClasses="neparni,parni">
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_adr}</f:facet>
+                                    #{a.adresa}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_brMeteoPodataka}</f:facet>
+                                    #{a.brojPreuzimanja}
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGrid>
+                </h:form>
+
+
+                <h:panelGrid columns="2">
+                    <h:form id="formaKorisnikoveAdrese">
+                        <h:panelGrid columns="4" >
+                            <h:commandButton value="#{m.meteoAdr_pregledKorAdr}" action="#{meteoAdrese.dajKorisnikoveAdrese}" >
+                                <f:ajax render=":formaKorisnikoveAdrese"/>
+                            </h:commandButton>
+                            <h:outputText style="color:red" value="#{m.meteoAdr_nedovoljnoSredstava}" rendered="#{meteoAdrese.nedovoljnoSredstava}"/>
+                            <h:outputText style="color:red" value="#{m.meteoAdr_nedovoljnoAdresa}" rendered="#{meteoAdrese.nemaAdresa}"/>
+                            <br/>
+                            <h:panelGrid columns="1" style="border: solid; border-width: 1px" rendered="#{meteoAdrese.prikazKorisnikovihAdresa}">
+                                <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriPregledKorisnikovihAdresa}" >
+                                    <f:ajax render=":formaKorisnikoveAdrese"/>
+                                </h:commandButton> 
+                                <h:selectOneListbox id="pregledAdresaKor"  value="#{meteoAdrese.odabranaKorisnikovaAdresa}">
+                                    <f:selectItems id="adr" value="#{meteoAdrese.sveKorisnikoveAdrese}" var="adresa" itemValue="#{adresa.adresa}" itemLabel="#{adresa.adresa}"/>
+                                </h:selectOneListbox>
+                                <h:commandButton value="#{m.meteoAdr_zadnjiMeteoPodaci}" action="#{meteoAdrese.dajZadnjeMeteoPodatke2}">
+                                    <f:ajax execute="pregledAdresaKor" render=":formaKorisnikoveAdrese :formaVazeciMeteoPodaciKor"/>
+                                </h:commandButton>
+                                <h:outputText style="color:red" value="#{m.meteoAdr_nedovoljnoSredstava}" rendered="#{meteoAdrese.nedovoljnoSredstavaMeteo}"/>
+                                <h:outputText style="color:red" value="#{m.meteoAdr_nepostojecaAdresa}" rendered="#{meteoAdrese.nemaAdresaMeteo}"/>
+                                <h:outputText style="color:red" value="#{m.meteoAdr_odaberiAdresu}" rendered="#{meteoAdrese.nijeOdabranaAdresa}"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </h:form>
+                    <h:form id="formaVazeciMeteoPodaciKor">
+                        <h:panelGrid columns="1" rendered="#{meteoAdrese.prikazVazecihMeteoPodatakaKor}" style="border: solid; border-width: 1px">
+                            <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriPregledMeteoPodaciKor}" rendered="#{meteoAdrese.prikazVazecihMeteoPodatakaKor}">
+                                <f:ajax render=":formaVazeciMeteoPodaciKor"/>
+                            </h:commandButton> 
+                            <h:outputLabel value="#{m.meteoAdr_zadnjiMeteoPodaci}: #{meteoAdrese.odabranaKorisnikovaAdresa} " />
+                            <ui:repeat  value="#{meteoAdrese.mpKor}" var="p" >
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="#{m.meteoAdr_izSunca}: " />
+                                    <h:outputText  value="#{p.sunRise.toGregorianCalendar().time}">
+                                        <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                    </h:outputText>
+                                    <h:outputLabel value="#{m.meteoAdr_zaSunca}: " />
+                                    <h:outputText  value="#{p.sunSet.toGregorianCalendar().time}">
+                                        <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                    </h:outputText> 
+                                    <h:outputLabel value="#{m.meteoAdr_temperatura}: "/>
+                                    <h:outputText  value="#{p.temperatureValue}" /> 
+                                    <h:outputLabel value="#{m.meteoAdr_naoblaka}: " />
+                                    <h:outputText  value="#{p.cloudsName}"  />
+                                    <h:outputLabel value="#{m.meteoAdr_tlak}: " />
+                                    <h:outputText  value="#{p.pressureValue}"  />
+                                </h:panelGrid> 
+                            </ui:repeat>
+                        </h:panelGrid>
+                    </h:form>
+                </h:panelGrid>
+
+                <h:form id="formaPregledSvihAdresa">
+                    <h:panelGrid columns="4" >
+                        <h:commandButton value="#{m.meteoAdr_pregledSvihAdr}" action="#{meteoAdrese.dajSveAdrese}" >
+                            <f:ajax render=":formaPregledSvihAdresa"/>
+                        </h:commandButton>
+                        <h:outputText style="color:red" value="#{m.meteoAdr_nedovoljnoSredstava}" rendered="#{meteoAdrese.nedovoljnoSredstava}"/>
+                        <h:outputText style="color:red" value="#{m.meteoAdr_nedovoljnoAdresa}" rendered="#{meteoAdrese.nemaAdresa}"/>
+                        <br/>
+                        <h:panelGrid columns="1" style="border: solid; border-width: 1px" rendered="#{meteoAdrese.prikazSvihAdresa}">
+                            <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriPregledSvihAdresa}">
+                                <f:ajax render=":formaPregledSvihAdresa"/>
+                            </h:commandButton> 
+                            <h:selectOneListbox id="pregledAdresa"  value="#{meteoAdrese.odabranaAdresa}">
+                                <f:selectItems id="adr" value="#{meteoAdrese.sveAdrese}" var="adresa" itemValue="#{adresa.adresa}" itemLabel="#{adresa.adresa}"/>
+                            </h:selectOneListbox>
+
+                            <h:commandButton value="#{m.meteoAdr_zadnjiMeteoPodaci}" action="#{meteoAdrese.dajZadnjeMeteoPodatke}">
+                                <f:ajax execute="pregledAdresa" render=":formaPregledSvihAdresa :formaVazeciMeteoPodaci"/>
+                            </h:commandButton>
+
+                            <h:panelGrid columns="4">
+                                <h:outputLabel for="brojMeteoPodataka" value="#{m.meteoAdr_brMeteoPodataka}: "/>
+                                <h:inputText id="brojMeteoPodataka" value="#{meteoAdrese.brojMeteoPodataka}"  converterMessage="#{m.meteoAdr_samoBroj}" required="true"  requiredMessage="#{m.meteoAdr_unosBroj}" validatorMessage="#{m.meteoAdr_brojVeci}">
+                                    <f:convertNumber integerOnly="true" type="number"  />
+                                    <f:validateLongRange minimum="1" maximum="10000" />
+                                </h:inputText>
+                                <h:commandButton value="#{m.meteoAdr_NmeteoPodataka}" action="#{meteoAdrese.dajNMeteoPodatka}">
+                                    <f:ajax execute="pregledAdresa brojMeteoPodataka" render=":formaPregledSvihAdresa :formaBrojMeteoPodataka"/>
+                                </h:commandButton>
+                                <h:message for="brojMeteoPodataka" style="color:red"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="6" >
+                                <p:outputLabel value="#{m.meteoAdr_meteoOdDo}:" />
+                                <p:calendar id="datetimeOd" value="#{meteoAdrese.dateTimeOd}" pattern="yyyy-MM-dd HH:mm:ss" required="true" requiredMessage="#{m.meteoAdrese.meteoAdr_novaAdresaM}" />
+                                <p:calendar id="datetimeDo" value="#{meteoAdrese.dateTimeDo}" pattern="yyyy-MM-dd HH:mm:ss" required="true" requiredMessage="#{m.meteoAdrese.meteoAdr_novaAdresaM}" />
+                                <h:commandButton value="#{m.meteoAdr_meteoOdDo}" action="#{meteoAdrese.dajMeteoPodatkaOdDo}">
+                                    <f:ajax execute="pregledAdresa datetimeOd datetimeDo" render=":formaPregledSvihAdresa :formaMeteoPodaciOdDo"/>
+                                </h:commandButton>
+                                <h:message for="datetimeOd" style="color:red"/>
+                                <h:message for="datetimeDo" style="color:red"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="4">
+                                <h:outputLabel for="brojDana" value="#{m.meteoAdr_brojDanaMeteoPrognoze}: "/>
+                                <h:inputText id="brojDana" value="#{meteoAdrese.brojDanaMeteoPrognoze}" converterMessage="#{m.meteoAdr_samoBroj}" required="true"  requiredMessage="#{m.meteoAdr_unosBroj}" validatorMessage="#{m.meteoAdr_brojIzm}">
+                                    <f:convertNumber integerOnly="true" type="number" />
+                                    <f:validateLongRange minimum="1" maximum="16" />
+                                </h:inputText>
+                                <h:commandButton value="#{m.meteoAdr_pregledPrognoze}" action="#{meteoAdrese.dajMeteoPrognozu}">
+                                    <f:ajax execute="pregledAdresa brojDana" render=":formaPregledSvihAdresa :formaMeteoPrognoza"/>
+                                </h:commandButton> 
+                                <br/>
+                                <h:message for="brojDana" style="color:red"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="4">
+                                <h:outputLabel for="brojSati" value="#{m.meteoAdr_brojSati}: "/>
+                                <h:inputText id="brojSati" value="#{meteoAdrese.brojSatiPrognoze}"  converterMessage="#{m.meteoAdr_samoBroj}" required="true"  requiredMessage="#{m.meteoAdr_unosBroj}" validatorMessage="#{m.meteoAdr_brojIzm2}">
+                                    <f:convertNumber integerOnly="true" type="number"  />
+                                    <f:validateLongRange minimum="1" maximum="120" />
+                                </h:inputText>
+                                <h:commandButton value="#{m.meteoAdr_brojSatiMeteoPrognoze}" action="#{meteoAdrese.dajMeteoPrognozuSati}">
+                                    <f:ajax execute="pregledAdresa brojSati" render=":formaPregledSvihAdresa :formaMeteoPrognozaSati"/>
+                                </h:commandButton>
+                                <h:message for="brojSati" style="color:red"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="4">
+                                <h:outputLabel for="brojStanica" value="#{m.meteoAdr_brojStanica}: "/>
+                                <h:inputText id="brojStanica" value="#{meteoAdrese.brojStanica}"  converterMessage="#{m.meteoAdr_samoBroj}" required="true"  requiredMessage="#{m.meteoAdr_unosBroj}" validatorMessage="#{m.meteoAdr_brojVeci}">
+                                    <f:convertNumber integerOnly="true" type="number"  />
+                                    <f:validateLongRange minimum="1" maximum="120" />
+                                </h:inputText>
+                                <h:commandButton value="#{m.meteoAdr_Stanica}" action="#{meteoAdrese.dajMeteoStanice}">
+                                    <f:ajax execute="pregledAdresa brojStanica" render=":formaPregledSvihAdresa :formaMeteoStanice"/>
+                                </h:commandButton>
+                                <h:message for="brojStanica" style="color:red"/>
+                            </h:panelGrid>
+                            <h:outputText style="color:red" value="#{m.meteoAdr_nedovoljnoSredstava}" rendered="#{meteoAdrese.nedovoljnoSredstavaMeteo}"/>
+                            <h:outputText style="color:red" value="#{m.meteoAdr_nepostojecaAdresa}" rendered="#{meteoAdrese.nemaAdresaMeteo}"/>
+                            <h:outputText style="color:red" value="#{m.meteoAdr_odaberiAdresu}" rendered="#{meteoAdrese.nijeOdabranaAdresa}"/>
+                            <h:outputText style="color:red" value="#{m.meteoAdr_nemaMeteoPod}" rendered="#{meteoAdrese.nemaMeteoPodataka}"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="formaVazeciMeteoPodaci">
+                    <h:panelGrid columns="2" rendered="#{meteoAdrese.prikazVazecihMeteoPodataka}" style="border: solid; border-width: 1px">
+                        <h:panelGrid columns="1">
+                            <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriPregledMeteoPodaci}" rendered="#{meteoAdrese.prikazVazecihMeteoPodataka}">
+                                <f:ajax render=":formaVazeciMeteoPodaci"/>
+                            </h:commandButton> 
+                            <h:outputLabel value="#{m.meteoAdr_zadnjiMeteoPodaci}: #{meteoAdrese.odabranaAdresa} " />
+                            <ui:repeat  value="#{meteoAdrese.mp}" var="p" >
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="#{m.meteoAdr_izSunca}: " />
+                                    <h:outputText  value="#{p.sunRise.toGregorianCalendar().time}" >
+                                        <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                    </h:outputText>  
+                                    <h:outputLabel value="#{m.meteoAdr_zaSunca}: " />
+                                    <h:outputText  value="#{p.sunSet.toGregorianCalendar().time}">
+                                        <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                    </h:outputText>  
+                                    <h:outputLabel value="#{m.meteoAdr_temperatura}: "/>
+                                    <h:outputText  value="#{p.temperatureValue}" /> 
+                                    <h:outputLabel value="#{m.meteoAdr_naoblaka}: " />
+                                    <h:outputText  value="#{p.cloudsName}"  />
+                                    <h:outputLabel value="#{m.meteoAdr_tlak}: " />
+                                    <h:outputText  value="#{p.pressureValue}"  />
+                                </h:panelGrid> 
+                            </ui:repeat>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <m:map partiallyTriggered="true" width="800px" height="500px" address="#{meteoAdrese.odabranaAdresa}">
+                                <m:marker/>
+                                <m:htmlInformationWindow htmlText="#{meteoAdrese.markerData}"/>
+                            </m:map>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </h:form>
+
+
+                <h:form id="formaBrojMeteoPodataka" >
+                    <h:panelGrid columns="1"  style="border: solid; border-width: 1px" rendered="#{meteoAdrese.prikaznMeteoPodataka}">
+                        <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvorinMeteoPodataka}">
+                            <f:ajax render=":formaBrojMeteoPodataka"/>
+                        </h:commandButton> 
+                        <h:dataTable value="#{meteoAdrese.nMeteoPodataka}" var="mp" class="tablica" 
+                                     headerClass="zaglavlje" rowClasses="neparni,parni">
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_adr}</f:facet>
+                                    #{mp.adresa}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_datum}</f:facet>
+                                <h:outputText  value="#{mp.lastUpdate.toGregorianCalendar().time}" >
+                                    <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_izSunca}</f:facet>
+                                <h:outputText  value="#{mp.sunRise.toGregorianCalendar().time}" >
+                                    <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_zaSunca}</f:facet>
+                                <h:outputText  value="#{mp.sunSet.toGregorianCalendar().time}" >
+                                    <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_temperatura}</f:facet>
+                                    #{mp.temperatureValue}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_naoblaka}</f:facet>
+                                    #{mp.weatherValue}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_tlak}</f:facet>
+                                    #{mp.pressureValue}
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="formaMeteoPodaciOdDo" >
+                    <h:panelGrid columns="1"  style="border: solid; border-width: 1px" rendered="#{meteoAdrese.prikazMeteoPodatakaOdDo}">
+                        <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriMeteoPodatakeOdDo}">
+                            <f:ajax render=":formaMeteoPodaciOdDo"/>
+                        </h:commandButton> 
+                        <h:dataTable value="#{meteoAdrese.meteoPodataciOdDo}" var="mp" class="tablica" 
+                                     headerClass="zaglavlje" rowClasses="neparni,parni">
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_adr}</f:facet>
+                                    #{mp.adresa}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_datum}</f:facet>
+                                <h:outputText  value="#{mp.lastUpdate.toGregorianCalendar().time}" >
+                                    <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_izSunca}</f:facet>
+                                <h:outputText  value="#{mp.sunRise.toGregorianCalendar().time}" >
+                                    <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_zaSunca}</f:facet>
+                                <h:outputText  value="#{mp.sunSet.toGregorianCalendar().time}" >
+                                    <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy HH:mm:ss" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_temperatura}</f:facet>
+                                    #{mp.temperatureValue}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_naoblaka}</f:facet>
+                                    #{mp.weatherValue}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_tlak}</f:facet>
+                                    #{mp.pressureValue}
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="formaMeteoPrognoza" >
+                    <h:panelGrid columns="1"  style="border: solid; border-width: 1px" rendered="#{meteoAdrese.prikazMeteoPrognoze}">
+                        <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriMeteoPrognozu}">
+                            <f:ajax render=":formaMeteoPrognoza"/>
+                        </h:commandButton> 
+                        <h:dataTable value="#{meteoAdrese.meteoPrognoza}" var="mp" class="tablica" 
+                                     headerClass="zaglavlje" rowClasses="neparni,parni">
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_adr}</f:facet>
+                                    #{mp.adresa}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_datum}</f:facet>
+                                <h:outputText  value="#{mp.prognoza.lastUpdate.toGregorianCalendar().time}" >
+                                    <f:convertDateTime type="both" dateStyle="long" pattern="dd-MM-yyyy" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_naoblaka}</f:facet>
+                                    #{mp.prognoza.cloudsName}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_temperatura}</f:facet>
+                                    #{mp.prognoza.temperatureValue} #{mp.prognoza.temperatureUnit}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_tlak}</f:facet>
+                                    #{mp.prognoza.pressureValue} #{mp.prognoza.pressureUnit}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_oblacnost}</f:facet>
+                                    #{mp.prognoza.humidityValue} #{mp.prognoza.humidityUnit}
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="formaMeteoPrognozaSati" >
+                    <h:panelGrid columns="1"  style="border: solid; border-width: 1px" rendered="#{meteoAdrese.prikazMeteoPrognozeSati}">
+                        <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriMeteoPrognozuSati}">
+                            <f:ajax render=":formaMeteoPrognozaSati"/>
+                        </h:commandButton> 
+                        <h:dataTable value="#{meteoAdrese.meteoPrognozaSati}" var="mp" class="tablica" 
+                                     headerClass="zaglavlje" rowClasses="neparni,parni">
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_adr}</f:facet>
+                                    #{mp.adresa}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_sati}</f:facet>
+                                    #{mp.sati}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_naoblaka}</f:facet>
+                                    #{mp.weatherValue}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_temperatura}</f:facet>
+                                    #{mp.temperatureValue} #{mp.temperatureUnit}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_tlak}</f:facet>
+                                    #{mp.pressureValue} #{mp.pressureUnit}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_oblacnost}</f:facet>
+                                    #{mp.humidityValue} #{mp.humidityUnit}
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="formaMeteoStanice" >
+                    <h:panelGrid columns="1"  style="border: solid; border-width: 1px" rendered="#{meteoAdrese.prikazMeteoStanica}">
+                        <h:commandButton value="#{m.meteoAdr_zatvori}" action="#{meteoAdrese.zatvoriMeteoStanice}">
+                            <f:ajax render=":formaMeteoStanice"/>
+                        </h:commandButton> 
+                        <h:dataTable value="#{meteoAdrese.meteoStanice}" var="ms" class="tablica" 
+                                     headerClass="zaglavlje" rowClasses="neparni,parni">
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_id}</f:facet>
+                                    #{ms.id}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_naziv}</f:facet>
+                                    #{ms.naziv}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_lat}</f:facet>
+                                    #{ms.lokacija.latitude}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">#{m.meteoAdr_long}</f:facet>
+                                    #{ms.lokacija.longitude}
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGrid>
+                </h:form>
+            </h:panelGrid>
+        </h:body>
+    </f:view>
+</html>
+
+
+

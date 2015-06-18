@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+    <application>
+        <locale-config>
+            <default-locale>hr</default-locale>
+            <supported-locale>en</supported-locale>
+        </locale-config>
+        <resource-bundle>
+            <base-name>org.foi.nwtis.mkovacek.i18n</base-name>
+            <var>m</var>
+        </resource-bundle>
+    </application>
+    <navigation-rule>
+        <from-view-id>/login.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{auth.prijava()}</from-action>
+            <from-outcome>ERROR</from-outcome>
+            <to-view-id>/login.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{auth.prijava()}</from-action>
+            <from-outcome>OK ADMIN</from-outcome>
+            <to-view-id>/privatno/admin/adminPanel.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{auth.prijava()}</from-action>
+            <from-outcome>OK USER</from-outcome>
+            <to-view-id>/privatno/user/home.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{auth.prijava()}</from-action>
+            <from-outcome>OK USER DATA</from-outcome>
+            <to-view-id>/privatno/settings.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>/index.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{auth.odjava()}</from-action>
+            <from-outcome>OK</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    
+    <navigation-rule>
+        <from-view-id>/privatno/settings.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>Odabir jezika</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Choose language</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Nazad</from-outcome>
+            <to-view-id>/privatno/user/home.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Back</from-outcome>
+            <to-view-id>/privatno/user/home.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/privatno/user/meteoAdrese.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>Odabir jezika</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Choose language</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Nazad</from-outcome>
+            <to-view-id>/privatno/user/home.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Back</from-outcome>
+            <to-view-id>/privatno/user/home.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/privatno/user/home.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>Korisnički podaci</from-outcome>
+            <to-view-id>/privatno/settings.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Adrese i meteo podaci</from-outcome>
+            <to-view-id>/privatno/user/meteoAdrese.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>User settings</from-outcome>
+            <to-view-id>/privatno/settings.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Address and weather forecast</from-outcome>
+            <to-view-id>/privatno/user/meteoAdrese.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Odabir jezika</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Choose language</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/privatno/admin/adminPanel.xhtml</from-view-id>
+        
+        <navigation-case>
+            <from-outcome>Korisnički podaci</from-outcome>
+            <to-view-id>/privatno/admin/korisnici.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>User settings</from-outcome>
+            <to-view-id>/privatno/admin/korisnici.xhtml</to-view-id>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>Email poruke</from-outcome>
+            <to-view-id>/privatno/admin/emailPoruke.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Email</from-outcome>
+            <to-view-id>/privatno/admin/emailPoruke.xhtml</to-view-id>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>Dnevnik</from-outcome>
+            <to-view-id>/privatno/admin/dnevnik.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Log</from-outcome>
+            <to-view-id>/privatno/admin/dnevnik.xhtml</to-view-id>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>Cjenik usluga</from-outcome>
+            <to-view-id>/privatno/admin/cjenik.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Price list</from-outcome>
+            <to-view-id>/privatno/admin/cjenik.xhtml</to-view-id>
+        </navigation-case>  
+             
+        <navigation-case>
+            <from-outcome>Odabir jezika</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Choose language</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+                
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/privatno/admin/dnevnik.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>Odabir jezika</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Choose language</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Nazad</from-outcome>
+            <to-view-id>/privatno/admin/adminPanel.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Back</from-outcome>
+            <to-view-id>/privatno/admin/adminPanel.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/privatno/admin/emailPoruke.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>Odabir jezika</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Choose language</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Nazad</from-outcome>
+            <to-view-id>/privatno/admin/adminPanel.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Back</from-outcome>
+            <to-view-id>/privatno/admin/adminPanel.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/privatno/admin/korisnici.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>Odabir jezika</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Choose language</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Nazad</from-outcome>
+            <to-view-id>/privatno/admin/adminPanel.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>Back</from-outcome>
+            <to-view-id>/privatno/admin/adminPanel.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+</faces-config>
