@@ -1,1 +1,1 @@
-# JavaEE, JSP, JSF, threads,JMS, REST, SOAP, websocket, james, glassfish,tomcat,
+# JavaEE, JSP, JSF, threads, JMS, REST, SOAP, websocket, james, glassfish,tomcat,
